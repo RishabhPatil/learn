@@ -6,3 +6,5 @@
 @media print{.method-sidebar,.context-builder,.scene-toolbar,.lab-selectors,.parameter-controls,.atlas-actions,.atlas-status{display:none}.atlas-workbench{display:block}.space-stage{break-inside:avoid}.atlas-reading{margin-top:20px}}
 
 .atlas-body main,.atlas-body .site-header,.atlas-body footer{width:calc(100% - 96px);margin-left:auto;margin-right:auto}.geometry-explanation{margin:10px 0 0;padding:0 2px}.atlas-body .lab-selectors{padding-top:12px}@media(max-width:800px){.atlas-body main,.atlas-body .site-header,.atlas-body footer{width:calc(100% - 48px)}}@media(max-width:480px){.atlas-body main,.atlas-body .site-header,.atlas-body footer{width:calc(100% - 36px)}}
+
+.frequency-pair[data-axis="w+h"]{background:#a8c9b7}.frequency-pair[data-axis="w−h"]{background:#deb390}.frequency-pair[data-axis="−w−h"]{background:#a9b9d6}.frequency-pair[data-axis="−w+h"]{background:#bbadd2}

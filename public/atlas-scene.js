@@ -80,6 +80,7 @@ export class PositionScene {
     const q=this.records[this.query],k=this.records[this.key];
     if(q&&k&&q!==k&&!q.excluded&&!k.excluded)this.segment(q.point,k.point,'#f2d99a99',1.4,true);
     const sorted=this.records.map(r=>({...r,screen:this.project(r.point)})).sort((a,b)=>a.screen.z-b.screen.z);
+    const textCount=this.records.filter(r=>r.token.type==='text').length;
     const maxAttention=Math.max(...(this.attention||[1]),.0001);
     for(const record of sorted){
       const {token,screen}=record;const isText=token.type==='text';const selected=token.id===this.query,inspected=token.id===this.key;
@@ -105,7 +106,7 @@ export class PositionScene {
         }else {c.imageSmoothingEnabled=false;c.drawImage(texture,token.w*cw,token.h*ch,cw,ch,p.x-size/2,p.y-size/2,size,size);}
       }else {c.fillStyle=fill;c.fillRect(p.x-size/2,p.y-size/2,size,size);}
       if(selected||inspected){c.strokeStyle=selected?'#ffd186':'#9dc5ff';c.lineWidth=2;c.beginPath();c.arc(p.x,p.y,Math.max(8,size*.72),0,Math.PI*2);c.stroke();}
-      if((selected||inspected)||(isText&&this.records.length<48)){
+      if((selected||inspected)||(isText&&textCount<=12)||(!isText&&token.h===0&&token.w===0)){
         c.font=(selected?'bold ':'')+'10px Consolas, monospace';c.fillStyle=selected?'#ffe2a9':inspected?'#c2dcff':'#c6d9cd';
         const text=(selected?'Q · ':inspected?'K · ':'')+token.label.slice(0,24);
         const textWidth=c.measureText(text).width;
