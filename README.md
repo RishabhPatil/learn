@@ -4,7 +4,15 @@ An interactive technical essay about positional encoding in transformers, by Ris
 
 **Website:** https://rishabhpatil.github.io/pe-understanding/
 
-The first edition covers sinusoidal encoding, RoPE, and ALiBi with inspectable SVG visualizations, a NumPy example, references to the original papers, and a downloadable citation. The site has no runtime framework or package dependencies.
+The introductory guide covers sinusoidal encoding, RoPE, and ALiBi with inspectable SVG visualizations, a NumPy example, original-paper references, and a downloadable citation.
+
+**[The Position Atlas](https://rishabhpatil.github.io/pe-understanding/atlas.html)** expands this into 20 explorable configurations: foundational absolute/relative encodings, rotary context extension, 2D axial/mixed RoPE, M-RoPE, interleaving, MRoPE-I, MHRoPE, Circle-RoPE, VRoPE, VideoRoPE, V2PE, and time-aligned MRoPE. It includes a neutral no-position baseline. It is a curated catalog, not an exhaustive literature claim.
+
+The atlas shares an editable text/image/video context across methods. Drag or use arrow keys to orbit its 3D index geometry; scroll or use +/- to zoom. Click a token to inspect it, shift-click to select a query, or use the accessible dropdowns and data table. Image texture and synthetic attention can color the scene. Local image input, frequency allocation, phase wheels, head selection, configuration links, and JSON exports make the constructions inspectable.
+
+Attention is a controlled mathematical example, **not a pretrained model inference**. Patches carry positional IDs; pixel colors texture their tiles. Simplified settings and method-specific omissions are displayed in the page. See [the implementation and source notes](docs/atlas.md).
+
+The site has no runtime framework or package dependencies. The renderer is a small local Canvas implementation of orthographic 3D projection.
 
 ## Local development
 
@@ -44,6 +52,11 @@ Visitors choose whether to accept analytics. Browser privacy signals and local p
 | `public/style.css` | Responsive layout and print styles |
 | `public/app.js` | SVG diagrams and interactions |
 | `public/math.js` | Positional encoding formulas |
+| `public/atlas.html` | Research atlas and context builder |
+| `public/atlas-data.js` | Sourced method catalog and scope notes |
+| `public/atlas-math.js` | Context coordinates, phases, and synthetic scores |
+| `public/atlas-scene.js` | Mouse/keyboard-controlled 3D renderer |
+| `public/atlas.js` | Context, image input, selection, share/export UI |
 | `public/analytics.js` | Optional consent-gated GA4 integration |
 | `public/privacy.html` | Visitor-facing privacy explanation |
 | `scripts/` | Build, preview, and evidence capture |
@@ -52,8 +65,9 @@ Visitors choose whether to accept analytics. Browser privacy signals and local p
 ## Editorial roadmap
 
 - Get technical peer feedback and document substantive corrections.
-- Add learned absolute and relative position embeddings.
-- Expand RoPE into multiple frequency pairs, length extrapolation, interpolation, and scaling variants, with paper-specific assumptions and tests.
+- Expand the research queue (xPos, LongRoPE, M-RoPE++, Compass-RoPE, Spiral RoPE) after checking complete constructions and adding method-specific tests.
+- Add checkpoint-specific frequency ratios, token boundary/merging rules, and layer scheduling where supported by sources.
+- Add an optional separately labeled real-model attention-data import, with model, layer, head, tokenizer and preprocessing metadata; never present synthetic scores as model measurements.
 - Add reproducible experiments before making model-performance claims.
 - Publish tagged releases and keep external citations separate from site-traffic metrics.
 
