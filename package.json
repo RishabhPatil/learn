@@ -1,0 +1,14 @@
+{
+  "name": "pe-understanding",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "An interactive guide to positional encoding in transformers",
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "build": "node scripts/build.mjs",
+    "test": "node --test",
+    "evidence": "node scripts/capture-evidence.mjs"
+  },
+  "engines": { "node": ">=22" }
+}
