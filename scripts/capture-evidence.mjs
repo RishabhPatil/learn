@@ -6,11 +6,11 @@ import { resolve } from 'node:path';
 // Raw captures stay local and are ignored by Git. Supply an existing token only
 // through the environment; never paste it into this file or a shell argument.
 const token = process.env.GITHUB_TOKEN;
-const repo = 'RishabhPatil/pe-understanding';
+const repo = 'RishabhPatil/learn';
 const timestamp = new Date().toISOString();
 const directory = resolve('evidence-private', timestamp.replaceAll(':', '-'));
 await mkdir(directory, { recursive: true });
-const headers = { Accept: 'application/vnd.github+json', 'User-Agent': 'pe-understanding-evidence', ...(token ? { Authorization: `Bearer ${token}` } : {}) };
+const headers = { Accept: 'application/vnd.github+json', 'User-Agent': 'learn-evidence', ...(token ? { Authorization: `Bearer ${token}` } : {}) };
 const endpoints = ['', '/traffic/views', '/traffic/clones', '/traffic/popular/referrers', '/traffic/popular/paths'];
 const records = [];
 for (const endpoint of endpoints) {

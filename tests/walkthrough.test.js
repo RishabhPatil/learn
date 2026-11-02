@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { methods } from '../public/atlas-data.js';
-import { tours } from '../public/atlas-tours.js';
-import { lessonPreset } from '../public/atlas-walkthrough.js';
-import { buildContext, coordinates, phase } from '../public/atlas-math.js';
+import { methods } from '../public/positional-encoding/atlas-data.js';
+import { tours } from '../public/positional-encoding/atlas-tours.js';
+import { lessonPreset } from '../public/positional-encoding/atlas-walkthrough.js';
+import { buildContext, coordinates, phase } from '../public/positional-encoding/atlas-math.js';
 
 test('every walkthrough resolves to valid token selections and encoding quantities', () => {
   for (const method of methods) {

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { methods } from '../public/atlas-data.js';
-import { buildContext, coordinates, phase, pairInfo, relativeBucket, defaults, circlePoint, PAIRS, DIM, encodingComponents, relativeEncoding } from '../public/atlas-math.js';
+import { methods } from '../public/positional-encoding/atlas-data.js';
+import { buildContext, coordinates, phase, pairInfo, relativeBucket, defaults, circlePoint, PAIRS, DIM, encodingComponents, relativeEncoding } from '../public/positional-encoding/atlas-math.js';
 const close=(a,b,eps=1e-9)=>assert.ok(Math.abs(a-b)<eps,`${a} ≠ ${b}`);
 
 test('every construction has finite coordinates and valid positional components in each sample',()=>{

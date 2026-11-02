@@ -4,7 +4,7 @@ export function createAnalytics({ window: win, document: doc, id }) {
   const production = win.location.hostname === 'rishabhpatil.github.io';
   const privacySignal = win.navigator.globalPrivacyControl === true || win.navigator.doNotTrack === '1';
   const available = valid && production && !privacySignal;
-  const storageKey = 'pe-understanding.analytics-consent.v1';
+  const storageKey = 'learn.analytics-consent.v1';
   const allowedEvents = new Set(['method_select', 'explorer_interaction', 'article_read', 'code_copy', 'citation_download', 'reference_click', 'source_click']);
   let choice = null;
   let started = false;
@@ -27,12 +27,12 @@ export function createAnalytics({ window: win, document: doc, id }) {
       allow_google_signals: false,
       allow_ad_personalization_signals: false,
       cookie_domain: 'none',
-      cookie_path: '/pe-understanding',
-      cookie_prefix: 'pe',
+      cookie_path: '/learn',
+      cookie_prefix: 'learn',
       cookie_expires: 60 * 60 * 24 * 180,
       page_location: win.location.origin + win.location.pathname,
       page_referrer: referrer,
-      page_title: win.location.pathname.endsWith('/atlas.html') ? 'The Position Atlas' : 'Position, Explained'
+      page_title: /^\/learn\/?(?:index\.html)?$/.test(win.location.pathname) ? 'Learn — Learning & Research' : win.location.pathname.endsWith('/atlas.html') ? 'The Position Atlas' : 'Position, Explained'
     });
     const script = doc.createElement('script');
     script.async = true;
@@ -50,7 +50,7 @@ export function createAnalytics({ window: win, document: doc, id }) {
       if (started) gtag('consent', 'update', { analytics_storage: 'denied' });
       for (const part of doc.cookie.split(';')) {
         const name = part.trim().split('=')[0];
-        if (name.startsWith('pe_ga')) doc.cookie = `${name}=; Max-Age=0; Path=/pe-understanding; SameSite=Lax`;
+        if (name.startsWith('learn_ga')) doc.cookie = `${name}=; Max-Age=0; Path=/learn; SameSite=Lax`;
       }
       // Stop the loaded SDK's timers as well as our event dispatch.
       if (started) win.location.reload();

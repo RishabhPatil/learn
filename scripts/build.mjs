@@ -1,7 +1,11 @@
-import { cp, mkdir, writeFile } from 'node:fs/promises';
+import { cp, mkdir, rm, writeFile } from 'node:fs/promises';
+import { resolve, dirname } from 'node:path';
 const id = (process.env.GA_MEASUREMENT_ID || '').trim();
 if (id && !/^G-[A-Z0-9]+$/.test(id)) throw new Error('GA_MEASUREMENT_ID must be a GA4 G-… measurement ID.');
-await mkdir('dist', { recursive: true });
+const output = resolve('dist');
+if (dirname(output) !== process.cwd()) throw new Error('Build output must be inside this checkout.');
+await rm(output, { recursive: true, force: true });
+await mkdir(output, { recursive: true });
 await cp('public', 'dist', { recursive: true });
 await writeFile('dist/config.js', `export const analyticsId = ${JSON.stringify(id)};\n`);
 await writeFile('dist/.nojekyll', '');

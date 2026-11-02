@@ -1,6 +1,6 @@
 import { sinusoidal, rotate, dot, alibiBias } from './math.js';
-import { analyticsId } from './config.js';
-import { createAnalytics } from './analytics.js';
+import { analyticsId } from '../config.js';
+import { createAnalytics } from '../analytics.js';
 
 const $ = id => document.getElementById(id);
 const analytics = createAnalytics({ window, document, id: analyticsId });

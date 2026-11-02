@@ -20,7 +20,7 @@ The interaction pattern is inspired by [Brendan Bycroft’s LLM Visualization](h
 
 ## Reference and examples
 
-Each method has a short introduction and a five-step narrative. Expand “Method notes & primary sources” for the full scientific introduction, equations, notation, primary-source citations, and the distinction between the published construction and the example. The notes live in `public/atlas-reference.js`; method metadata and scope live in `public/atlas-data.js`.
+Each method has a short introduction and a five-step narrative. Expand “Method notes & primary sources” for the full scientific introduction, equations, notation, primary-source citations, and the distinction between the published construction and the example. The notes live in `public/positional-encoding/atlas-reference.js`; method metadata and scope live in `public/positional-encoding/atlas-data.js`.
 
 Fixed presets provide text, text plus one image, three video frames, or two interleaved images. All visuals use a 4×4 patch grid over a locally generated 48×48 texture. There is no context builder, editable prompt, image upload, or model tokenizer. Two-dimensional vision methods exclude text and ignore frame order. Text examples are disabled for vision-only methods.
 
@@ -52,8 +52,8 @@ Learned absolute, Shaw, and T5 values are deterministic example tables, not lear
 ## Adding a method
 
 1. Read a primary source and, when available, its official implementation. Record version-specific behavior.
-2. Add a source-linked catalog entry in `public/atlas-data.js` and a scientific introduction in `public/atlas-reference.js`, with explicit scope and limitations.
-3. Implement coordinate, phase, vector, or positional-bias behavior in `public/atlas-math.js`. Keep encoding quantities separate from model inference.
+2. Add a source-linked catalog entry in `public/positional-encoding/atlas-data.js` and a scientific introduction in `public/positional-encoding/atlas-reference.js`, with explicit scope and limitations.
+3. Implement coordinate, phase, vector, or positional-bias behavior in `public/positional-encoding/atlas-math.js`. Keep encoding quantities separate from model inference.
 4. Add independent mathematical checks: boundary cases, expected coordinates, components, and invariants from the construction.
 5. Add a method-specific walkthrough and verify its selected examples. Add only necessary parameter controls. Do not draw a new geometry when a method changes frequencies or positional biases alone.
 6. Verify fixed image/video/text examples in the browser, including keyboard operation and mobile layout.

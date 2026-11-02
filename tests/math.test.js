@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { sinusoidal, rotate, dot, alibiBias, softmax } from '../public/math.js';
+import { sinusoidal, rotate, dot, alibiBias, softmax } from '../public/positional-encoding/math.js';
 
 const close = (a, b) => assert.ok(Math.abs(a - b) < 1e-10, `${a} != ${b}`);
 test('sinusoidal pairs start at (0,1), preserve unit norm, and use the stated frequency', () => {

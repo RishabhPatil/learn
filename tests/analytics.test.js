@@ -2,9 +2,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createAnalytics } from '../public/analytics.js';
 function fixture(options = {}) {
-  const scripts = [], storage = new Map(); let reloads = 0;
-  const window = { location: { hostname: 'rishabhpatil.github.io', origin: 'https://rishabhpatil.github.io', pathname: '/pe-understanding/', reload() { reloads++; } }, navigator: {}, localStorage: { getItem: key => storage.get(key) || null, setItem: (key, value) => storage.set(key, value) } };
+  const scripts = [], storage = options.storage ?? new Map(); let reloads = 0;
+  const window = { location: { hostname: 'rishabhpatil.github.io', origin: 'https://rishabhpatil.github.io', pathname: '/learn/positional-encoding/', reload() { reloads++; } }, navigator: {}, localStorage: { getItem: key => storage.get(key) || null, setItem: (key, value) => storage.set(key, value) } };
   const document = { referrer: 'https://example.org/private/path?email=secret', cookie: '', createElement: () => ({}), head: { append: el => scripts.push(el) } };
+  if (options.path) window.location.pathname = options.path;
   if (options.local) window.location.hostname = 'localhost';
   if (options.dnt) window.navigator.doNotTrack = '1';
   if (options.gpc) window.navigator.globalPrivacyControl = true;
@@ -22,11 +23,29 @@ test('no collection before consent or after decline; acceptance sends one pagevi
   assert.equal(commands.filter(c => c[1] === 'page_view').length, 1);
   const config = commands.find(c => c[0] === 'config')[2];
   assert.equal(config.page_referrer, 'https://example.org');
-  assert.equal(config.page_location, 'https://rishabhpatil.github.io/pe-understanding/');
+  assert.equal(config.page_location, 'https://rishabhpatil.github.io/learn/positional-encoding/');
   assert.equal(config.allow_google_signals, false);
+  assert.equal(config.cookie_path, '/learn');
+  assert.equal(config.cookie_prefix, 'learn');
   f.api.setChoice('declined'); const count = f.window.dataLayer.length;
   f.api.track('code_copy'); assert.equal(f.window.dataLayer.length, count);
   assert.equal(f.window['ga-disable-G-TEST123'], true); assert.equal(f.reloads(), 1);
+});
+test('homepage and articles share consent but report their own page locations', () => {
+  const home = fixture({ path: '/learn/' });
+  home.api.setChoice('accepted');
+  const homeConfig = home.window.dataLayer.map(args => [...args]).find(c => c[0] === 'config')[2];
+  assert.equal(homeConfig.page_title, 'Learn — Learning & Research');
+  const atlas = fixture({ storage: home.storage, path: '/learn/positional-encoding/atlas.html' });
+  assert.equal(atlas.api.needsChoice, false);
+  assert.equal(atlas.scripts.length, 1);
+  const config = atlas.window.dataLayer.map(args => [...args]).find(c => c[0] === 'config')[2];
+  assert.equal(config.page_title, 'The Position Atlas');
+  assert.equal(config.page_location, 'https://rishabhpatil.github.io/learn/positional-encoding/atlas.html');
+  atlas.api.setChoice('declined');
+  const returnHome = fixture({ storage: home.storage, path: '/learn/' });
+  assert.equal(returnHome.api.needsChoice, false);
+  assert.equal(returnHome.scripts.length, 0);
 });
 test('missing ID, localhost, DNT and GPC never load analytics', () => {
   for (const options of [{ id: '' }, { id: 'invalid' }, { local: true }, { dnt: true }, { gpc: true }]) {

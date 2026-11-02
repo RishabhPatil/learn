@@ -1,12 +1,12 @@
-# Position, Explained
+# Learn — Learning & Research
 
-An interactive technical essay about positional encoding in transformers, by Rishabh Patil.
+Technical essays, research notes, and interactive explorations by Rishabh Patil. The first project is Position, Explained.
 
-**Website:** https://rishabhpatil.github.io/pe-understanding/
+**Website:** https://rishabhpatil.github.io/learn/
 
 The introductory guide covers sinusoidal encoding, RoPE, and ALiBi with inspectable SVG visualizations, a NumPy example, original-paper references, and a downloadable citation.
 
-**[The Position Atlas](https://rishabhpatil.github.io/pe-understanding/atlas.html)** expands this into 20 explorable configurations: foundational absolute/relative encodings, rotary context extension, 2D axial/mixed RoPE, M-RoPE, interleaving, MRoPE-I, MHRoPE, Circle-RoPE, VRoPE, VideoRoPE, V2PE, and time-aligned MRoPE. It includes a neutral no-position baseline. It is a curated catalog, not an exhaustive literature claim.
+**[The Position Atlas](https://rishabhpatil.github.io/learn/positional-encoding/atlas.html)** expands this into 20 explorable configurations: foundational absolute/relative encodings, rotary context extension, 2D axial/mixed RoPE, M-RoPE, interleaving, MRoPE-I, MHRoPE, Circle-RoPE, VRoPE, VideoRoPE, V2PE, and time-aligned MRoPE. It includes a neutral no-position baseline. It is a curated catalog, not an exhaustive literature claim.
 
 The desktop atlas has a guided explanation on the left and a synchronized visualization on the right. Each method has five Previous/Next steps: input tokens, position IDs, encoding, comparison, and free exploration. Scientific notes, equations, notation, sources, and limits remain in the left pane. Fixed text/image/video examples make position IDs, additive vectors, relative terms, frequency allocation, and rotary phases inspectable. Drag or use arrow keys to orbit the 3D geometry; scroll or use +/- to zoom. Click to select token B, shift-click for token A, or use the accessible dropdowns and data tables.
 
@@ -20,7 +20,7 @@ Requires Node.js 22 or newer. No package installation is needed.
 
 ```sh
 npm run dev
-# http://127.0.0.1:4173/pe-understanding/
+# http://127.0.0.1:4173/learn/
 npm test
 npm run build
 node scripts/serve.mjs --dist
@@ -32,7 +32,7 @@ Reload the browser after edits. Stop the server with Ctrl+C. Tests exercise posi
 
 The workflow in `.github/workflows/pages.yml` checks pull requests and deploys pushes to `main` using GitHub Actions. Repository **Settings → Pages → Build and deployment → Source** must be **GitHub Actions**. A successful `deploy` job reports the published URL. To deploy without a source change, use **Actions → Test and deploy GitHub Pages → Run workflow**.
 
-All asset links are relative so the project works under `/pe-understanding/`. Changing the repository name or domain also requires updating canonical URLs, sitemap, citation, the production analytics hostname and cookie path, and local preview prefix.
+All asset links are relative so the project works under `/learn/`. Changing the repository name or domain also requires updating canonical URLs, sitemap, citation, the production analytics hostname and cookie path, and local preview prefix.
 
 ## Analytics activation
 
@@ -48,21 +48,23 @@ Visitors choose whether to accept analytics. Browser privacy signals and local p
 
 | Path | Purpose |
 | --- | --- |
-| `public/index.html` | Article, metadata, accessible controls |
-| `public/style.css` | Responsive layout and print styles |
-| `public/app.js` | SVG diagrams and interactions |
-| `public/math.js` | Positional encoding formulas |
-| `public/atlas.html` | Scientific reference and fixed examples |
-| `public/atlas-data.js` | Sourced method catalog and scope notes |
-| `public/atlas-tours.js` | Five scientific walkthrough steps for each configuration |
-| `public/atlas-walkthrough.js` | Reproducible step presets and selections |
-| `public/atlas-walkthrough.css` | Responsive split-pane walkthrough layout |
-| `public/atlas-reference.js` | Scientific introductions, equations, and primary citations |
-| `public/atlas-math.js` | Position IDs, phases, vectors, and relative terms |
-| `public/atlas-scene.js` | Mouse/keyboard-controlled 3D renderer |
-| `public/atlas.js` | Method reference, fixed examples, selection, share/export UI |
+| `public/index.html` | Learning homepage and collection index |
+| `public/learn.js` | Homepage analytics consent controls |
+| `public/positional-encoding/index.html` | Article, metadata, accessible controls |
+| `public/positional-encoding/style.css` | Responsive layout and print styles |
+| `public/positional-encoding/app.js` | SVG diagrams and interactions |
+| `public/positional-encoding/math.js` | Positional encoding formulas |
+| `public/positional-encoding/atlas.html` | Scientific reference and fixed examples |
+| `public/positional-encoding/atlas-data.js` | Sourced method catalog and scope notes |
+| `public/positional-encoding/atlas-tours.js` | Five scientific walkthrough steps for each configuration |
+| `public/positional-encoding/atlas-walkthrough.js` | Reproducible step presets and selections |
+| `public/positional-encoding/atlas-walkthrough.css` | Responsive split-pane walkthrough layout |
+| `public/positional-encoding/atlas-reference.js` | Scientific introductions, equations, and primary citations |
+| `public/positional-encoding/atlas-math.js` | Position IDs, phases, vectors, and relative terms |
+| `public/positional-encoding/atlas-scene.js` | Mouse/keyboard-controlled 3D renderer |
+| `public/positional-encoding/atlas.js` | Method reference, fixed examples, selection, share/export UI |
 | `public/analytics.js` | Optional consent-gated GA4 integration |
-| `public/privacy.html` | Visitor-facing privacy explanation |
+| `public/positional-encoding/privacy.html` | Visitor-facing privacy explanation |
 | `scripts/` | Build, preview, and evidence capture |
 | `tests/` | Formula and privacy behavior checks |
 
@@ -77,3 +79,9 @@ Visitors choose whether to accept analytics. Browser privacy signals and local p
 This is an educational explanation of established methods, not a claim to have invented them. Links to the original papers appear alongside the relevant explanations.
 
 The guided layout is inspired by [Brendan Bycroft’s LLM Visualization](https://bbycroft.net/llm). The positional-encoding implementation and explanatory content are specific to this atlas.
+
+## Publishing another article
+
+Add an article under `public/<topic>/` and link it from `public/index.html`. Keep shared analytics and configuration imports at the site root; use the same GA4 property for the collection. Add the canonical article URL to `public/sitemap.xml`.
+
+The repository was renamed from `pe-understanding` to `learn`. GitHub redirects the old repository URL. Legacy website redirects are maintained under `pe-understanding/` in `RishabhPatil.github.io`, preserving query strings and atlas configuration fragments. The learning homepage is now maintained in this repository, not in the personal-site repository.

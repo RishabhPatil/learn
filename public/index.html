@@ -3,59 +3,75 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Position, Explained — An interactive guide to positional encoding</title>
-  <meta name="description" content="Build intuition for positional encoding in transformers. Explore sinusoidal embeddings, rotary position embeddings (RoPE), and ALiBi with interactive visualizations.">
+  <title>Learn — Learning & Research by Rishabh Patil</title>
+  <meta name="description" content="Learning and research notes by Rishabh Patil. Explore machine learning through technical essays, primary sources, and interactive visualizations.">
   <meta name="author" content="Rishabh Patil">
   <meta name="theme-color" content="#f7f6f0">
-  <meta name="referrer" content="strict-origin-when-cross-origin">
-  <link rel="canonical" href="https://rishabhpatil.github.io/pe-understanding/">
-  <meta property="og:title" content="Position, Explained">
-  <meta property="og:description" content="How a transformer finds its place. An interactive guide to sinusoidal encoding, RoPE, and ALiBi.">
-  <meta property="og:type" content="article">
-  <meta property="og:url" content="https://rishabhpatil.github.io/pe-understanding/">
+  <link rel="canonical" href="https://rishabhpatil.github.io/learn/">
+  <meta property="og:title" content="Learn — Rishabh Patil">
+  <meta property="og:description" content="Ideas, worked through. Technical essays and interactive explorations of machine learning.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://rishabhpatil.github.io/learn/">
   <meta name="twitter:card" content="summary">
+  <link rel="stylesheet" href="./learn.css">
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./style.css">
-  <script type="module" src="./app.js"></script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Position, Explained","description":"An interactive guide to positional encoding in transformers","author":{"@type":"Person","name":"Rishabh Patil","url":"https://github.com/RishabhPatil"},"url":"https://rishabhpatil.github.io/pe-understanding/","inLanguage":"en","about":["Transformers","Positional encoding","Rotary position embeddings"]}</script>
+  <script type="module" src="./learn.js"></script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"Learn — Learning & Research","url":"https://rishabhpatil.github.io/learn/","author":{"@type":"Person","name":"Rishabh Patil","url":"https://rishabhpatil.github.io/"},"hasPart":[{"@type":"TechArticle","headline":"Position, Explained","url":"https://rishabhpatil.github.io/learn/positional-encoding/"},{"@type":"WebPage","name":"The Position Atlas","url":"https://rishabhpatil.github.io/learn/positional-encoding/atlas.html"}]}</script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
-  <header class="site-header"><a class="brand" href="./"><span class="brand-mark" aria-hidden="true">p<span>↗</span></span> Position, Explained<span class="edition"> / A VISUAL FIELD GUIDE</span></a><nav aria-label="Main"><a href="./atlas.html">3D research atlas</a><a href="#references">References</a><a class="source-link" href="https://rishabhpatil.github.io/learn/">Learn ↗</a></nav></header>
-  <main id="main">
-    <section class="hero" aria-labelledby="title">
-      <div class="hero-copy"><div class="eyebrow"><span class="dot"></span> TRANSFORMER NOTES · 01</div><h1 id="title">Every token<br>needs a <em>place.</em></h1><p class="intro">Attention connects words. Position gives them order. A hands-on guide to the signals that help transformers tell <span>“dog bites man”</span> from <span>“man bites dog.”</span></p><a class="primary" href="#explorer">Explore the encodings <span aria-hidden="true">↗</span></a><div class="byline"><span class="avatar">RP</span><div><a href="https://github.com/RishabhPatil">Rishabh Patil</a><small>An interactive technical essay · v1.0</small></div></div></div>
-      <figure class="hero-figure"><div class="figure-top"><span>POSITION → SIGNAL</span><span class="live-label"><span class="dot"></span> 32 DIMENSIONS</span></div><svg id="hero-waves" viewBox="0 0 560 360" role="img" aria-label="Sinusoidal positional signals at different frequencies"></svg><figcaption><span>Same sequence. Different frequencies.</span><span>FIG. 01</span></figcaption></figure>
+  <header class="site-header wrap">
+    <a class="identity" href="/" aria-label="Rishabh Patil, personal homepage"><span class="monogram" aria-hidden="true">rp.</span><span>Rishabh Patil</span></a>
+    <nav aria-label="Main"><a href="/learn/" aria-current="page">Learn</a><a href="https://github.com/RishabhPatil">GitHub <span aria-hidden="true">↗</span></a></nav>
+  </header>
+  <main class="wrap" id="main">
+    <section class="intro" aria-labelledby="title">
+      <p class="eyebrow"><span class="dot" aria-hidden="true"></span> LEARNING & RESEARCH</p>
+      <h1 id="title">Ideas,<br><em>worked through.</em></h1>
+      <div class="intro-bottom"><p>Notes on machine learning, from the underlying mathematics to the details you can see and explore.</p><span class="margin-note">READ · EXPLORE · REVISIT</span></div>
     </section>
-    <div class="chapter-strip"><span>THE ROUTE</span><a href="#why"><b>01</b> The missing ingredient</a><a href="#explorer"><b>02</b> Make it tangible</a><a href="#compare"><b>03</b> Connect the ideas</a></div>
-    <aside class="atlas-invitation"><div><p class="eyebrow">BEYOND THE BASICS / NEW RESEARCH ATLAS</p><h2>Text on a line. Images in space.</h2><p>Explore M-RoPE, MHRoPE, MRoPE-I, Circle-RoPE, VRoPE, VideoRoPE, and more in a shared 3D context. Orbit the geometry, inspect patches, and compare position IDs and rotary phases.</p></div><a class="primary" href="./atlas.html">Open the 3D atlas ↗</a></aside>
-    <section id="why" class="article-section split"><div><p class="eyebrow">01 / THE INTUITION</p><h2>Meaning is not<br>the whole story.</h2></div><div class="prose"><p>Consider the same three tokens in two different orders. Their individual embeddings do not change, but the sentence does.</p><div class="sentences"><div><span>dog<small>0</small></span><span>bites<small>1</small></span><span>man<small>2</small></span></div><div><span>man<small>0</small></span><span>bites<small>1</small></span><span>dog<small>2</small></span></div></div><p>Unmasked self-attention, on its own, is <em>permutation equivariant</em>: shuffle its input rows and the output rows shuffle the same way. It has no inherent notion of “first” or “three tokens ago.” A causal mask constrains which tokens are visible, but does not explicitly encode their distance.</p><p>Positional methods supply that missing structure. We can <strong>add a signal</strong> to the input, <strong>rotate queries and keys</strong>, or <strong>bias attention scores</strong>. Let’s see all three.</p></div></section>
-    <section id="explorer" class="explorer-section"><div class="section-heading"><div><p class="eyebrow">02 / THE PLAYGROUND</p><h2>Move a slider.<br>Build an intuition.</h2></div><p>Small, inspectable examples.<br>Every mark comes from the equations.</p></div>
-      <div class="lab"><div class="lab-tabs" role="tablist" aria-label="Encoding method"><button id="tab-sinusoidal" role="tab" aria-selected="true" aria-controls="panel-sinusoidal" data-method="sinusoidal">01 <span>Sinusoidal</span></button><button id="tab-rope" role="tab" aria-selected="false" aria-controls="panel-rope" tabindex="-1" data-method="rope">02 <span>RoPE</span></button><button id="tab-alibi" role="tab" aria-selected="false" aria-controls="panel-alibi" tabindex="-1" data-method="alibi">03 <span>ALiBi</span></button></div>
-      <div id="panel-sinusoidal" class="lab-panel" role="tabpanel" aria-labelledby="tab-sinusoidal"><div class="lab-controls"><span class="tag">ADD A SIGNAL</span><h3>A fingerprint for<br>every position.</h3><p>Each row is a position. Each column is one component of its encoding. Nearby positions share patterns, but no single dimension tells the whole story.</p><label for="position">Token position <output id="position-value">12</output></label><input type="range" id="position" min="0" max="47" value="12"><label for="base">Frequency base <output id="base-value">10,000</output></label><select id="base"><option value="100">100 — faster variation</option><option value="1000">1,000</option><option value="10000" selected>10,000 — original paper</option></select><div class="try"><b>TRY THIS</b><p>Move down the rows. The left columns change quickly; the right ones barely move.</p></div></div><div class="lab-visual"><div class="chart-heading"><h4>The position matrix</h4><span>48 positions × 32 dimensions</span></div><svg id="heatmap" viewBox="0 0 680 440" role="img" aria-label="Heatmap of sinusoidal encodings"></svg><div class="legend"><span>−1</span><div class="gradient"></div><span>+1</span><span class="legend-note">Color = component value</span></div><p class="chart-note" id="sin-result" aria-live="polite"></p></div></div>
-      <div id="panel-rope" class="lab-panel" role="tabpanel" aria-labelledby="tab-rope" hidden><div class="lab-controls"><span class="tag">ROTATE A VECTOR</span><h3>Absolute angles.<br>Relative geometry.</h3><p>RoPE rotates pairs of query and key components. Shift both positions equally: the angles change, but their dot product stays the same.</p><label for="query">Query position m <output id="query-value">6</output></label><input type="range" id="query" min="0" max="24" value="6"><label for="key">Key position n <output id="key-value">2</output></label><input type="range" id="key" min="0" max="24" value="2"><button class="secondary" id="shift">Shift both +1 ↗</button><div class="try"><b>ONE PAIR, ZOOMED IN</b><p>q = k = (1, 0), θ = 0.25 rad/token. Real attention uses learned vectors and many rotation frequencies.</p></div></div><div class="lab-visual"><div class="chart-heading"><h4>Rotation in a 2D plane</h4><span>One illustrative component pair</span></div><svg id="rotation" viewBox="0 0 680 440" role="img" aria-label="Query and key vectors rotated by position"></svg><p class="chart-note" id="rope-result" aria-live="polite"></p></div></div>
-      <div id="panel-alibi" class="lab-panel" role="tabpanel" aria-labelledby="tab-alibi" hidden><div class="lab-controls"><span class="tag">BIAS A SCORE</span><h3>A small preference<br>for nearby tokens.</h3><p>ALiBi adds a linear positional bias to attention logits. Each head uses a different fixed slope.</p><label for="slope">Head slope <output id="slope-value">0.25</output></label><input type="range" id="slope" min="0" max="1" step="0.05" value="0.25"><div class="try"><b>TRY THIS</b><p>Set the slope to zero. Every positional bias becomes zero.</p></div><p class="fine">This example fixes the reference position at i = 15 and plots only the positional term −s(i − j), for j ≤ i.</p></div><div class="lab-visual"><div class="chart-heading"><h4>The linear positional bias</h4><span>Reference position i = 15</span></div><svg id="bias" viewBox="0 0 680 440" role="img" aria-label="Raw positional bias across 16 positions"></svg><p class="chart-note" id="alibi-result" aria-live="polite"></p></div></div>
-      <div class="equation-strip"><span>UNDER THE HOOD</span><code id="active-equation">PE(p, 2i) = sin(p / B^(2i/d)) · PE(p, 2i+1) = cos(p / B^(2i/d))</code></div></div>
-      <noscript><p class="notice">The interactive diagrams need JavaScript. The explanations, comparison, implementation, and references below remain available.</p></noscript>
+    <section class="collection" aria-labelledby="collection-title">
+      <div class="section-label"><h2 id="collection-title">The collection</h2><span>01 / POSITIONAL ENCODING</span></div>
+      <article class="entry">
+        <div class="entry-copy">
+          <p class="eyebrow">INTERACTIVE ESSAY & RESEARCH ATLAS</p>
+          <h3><a href="/learn/positional-encoding/">Position,<br><em>Explained.</em></a></h3>
+          <p>How does a model know where a token belongs? Start with sinusoidal signals and rotary embeddings, then explore position across text, images, and video.</p>
+          <ul class="tags" aria-label="Topics"><li>Transformers</li><li>RoPE</li><li>Multimodal models</li></ul>
+          <div class="entry-actions"><a class="primary" href="/learn/positional-encoding/atlas.html">Explore the 3D atlas <span aria-hidden="true">↗</span></a><a class="text-link" href="/learn/positional-encoding/">Start with the guide <span aria-hidden="true">→</span></a></div>
+          <p class="entry-note">20 encoding configurations · guided walkthroughs · primary sources</p>
+        </div>
+        <a class="figure-link" href="/learn/positional-encoding/atlas.html" aria-label="Open the Position Atlas interactive 3D explorer">
+          <figure>
+            <div class="figure-label"><span>FROM SEQUENCE TO SPACE</span><span>FIG. 01</span></div>
+            <svg viewBox="0 0 480 340" role="img" aria-labelledby="diagram-title diagram-description">
+              <title id="diagram-title">Text positions and an image patch grid</title>
+              <desc id="diagram-description">An illustrative spatial layout with text tokens on a line and image patches in a plane. Open the atlas to manipulate the actual position indices.</desc>
+              <defs><pattern id="grid" width="34" height="34" patternUnits="userSpaceOnUse" patternTransform="matrix(1 .35 -1 .35 240 188)"><path d="M34 0H0V34" fill="none" stroke="#44625a" stroke-width=".7"/></pattern></defs>
+              <path d="M30 238 240 164 450 238 240 312Z" fill="url(#grid)"/>
+              <g fill="none" stroke="#90b1a1" stroke-width="1.2"><path d="M93 247 240 298 389 247M240 298V104"/><path d="m89 245 7-1-1 7m290-8 6 2-1 6m-153-141 3-7 3 7"/></g>
+              <g fill="#b2c4b8" font-family="monospace" font-size="11"><text x="76" y="268">height</text><text x="369" y="268">width</text><text x="250" y="107">position</text></g>
+              <g transform="matrix(1 .35 0 1 159 101)" stroke="#193e33" stroke-width="3">
+                <path d="M0 0H112V112H0Z" fill="#abc7b0"/>
+                <path d="M0 0H28V28H0ZM56 0H84V28H56ZM28 28H56V56H28ZM84 28H112V56H84ZM0 56H28V84H0ZM56 56H84V84H56ZM28 84H56V112H28ZM84 84H112V112H84Z" fill="#6c9b83"/>
+                <path d="M28 28H56V56H28Z" fill="#d39b72"/><path d="M56 56H84V84H56Z" fill="#9cb7cc"/>
+                <path d="M28 0V112M56 0V112M84 0V112M0 28H112M0 56H112M0 84H112" fill="none"/>
+              </g>
+              <path d="M92 79 129 92 165 105M281 241 315 253 350 266" fill="none" stroke="#d8c18b" stroke-width="1.2" stroke-dasharray="3 5"/>
+              <g fill="#e8d098"><circle cx="92" cy="79" r="5"/><circle cx="129" cy="92" r="5"/><circle cx="165" cy="105" r="5"/><circle cx="281" cy="241" r="5"/><circle cx="315" cy="253" r="5"/><circle cx="350" cy="266" r="5"/></g>
+              <g fill="#dce8de" font-family="monospace" font-size="11"><text x="72" y="59">text</text><text x="284" y="171">image</text><text x="284" y="187">patches</text><text x="309" y="235">text</text></g>
+              <path d="M276 174H264" stroke="#abc7b0"/>
+            </svg>
+            <figcaption><span>A token sequence. A spatial structure.</span><span aria-hidden="true">↗</span></figcaption>
+          </figure>
+        </a>
+      </article>
+      <div class="archive-row"><div><p class="eyebrow">EARLIER NOTES · 2018–2019</p><p>Hidden Markov models, principal component analysis, and text exploration.</p></div><a class="text-link" href="/Posts/">Browse the archive <span aria-hidden="true">↗</span></a></div>
     </section>
-    <section class="article-section split" id="mechanics"><div><p class="eyebrow">A CLOSER LOOK</p><h2>Three places<br>to put position.</h2></div><div class="prose mechanics"><details open><summary><span>01</span> Sinusoidal: add to the embedding</summary><p>The original Transformer adds a fixed position vector to each token embedding before the first layer. Even and odd dimensions form sine–cosine pairs; their wavelengths grow geometrically. In the playground, p is position, d = 32, i indexes a pair, and B is the frequency base.</p><p>For a fixed offset, a sine–cosine pair at p + Δ is a linear transformation of the pair at p. This gives the model a useful structure for learning relative offsets. A formula defined for any position does not guarantee useful behavior beyond training lengths.</p><a href="https://arxiv.org/abs/1706.03762">Vaswani et al., 2017 · §3.5 ↗</a></details><details><summary><span>02</span> RoPE: rotate queries and keys</summary><p>For each pair, multiply the query at m by R(mθ), and the key at n by R(nθ). Since rotations compose, their inner product is qᵀR((n − m)θ)k. Its positional dependence is on the offset, while its content dependence remains in q and k.</p><p>The playground isolates one pair with identical unit vectors. Real models use many pairs, with different frequencies. RoPE is not an additive input embedding, and the displayed cosine is not a complete attention score.</p><a href="https://arxiv.org/abs/2104.09864">Su et al., 2021 · RoFormer ↗</a></details><details><summary><span>03</span> ALiBi: change the attention logit</summary><p>For a visible key j ≤ i, a causal head uses score(i, j) = qᵢ·kⱼ / √dₖ − sₕ(i − j). Future keys remain masked. The slope sₕ is fixed per head; it makes distant keys less favored when content scores are otherwise equal.</p><p>Strong content scores can still outweigh the penalty. The published method tests extrapolation to longer sequences, but that is an empirical result under specific training and evaluation conditions, not an unlimited-context guarantee.</p><a href="https://arxiv.org/abs/2108.12409">Press et al., 2021 · Train Short, Test Long ↗</a></details></div></section>
-    <section id="compare" class="article-section"><p class="eyebrow">03 / CONNECT THE IDEAS</p><h2>Same problem. Different mechanisms.</h2><div class="table-wrap"><table><caption class="sr-only">Comparison of positional encoding mechanisms</caption><thead><tr><th scope="col">Method</th><th scope="col">Where position enters</th><th scope="col">What to remember</th></tr></thead><tbody><tr><th scope="row">Sinusoidal <span>2017</span></th><td>Added to token embeddings</td><td>A fixed, multiscale coordinate signal.</td></tr><tr><th scope="row">RoPE <span>2021</span></th><td>Rotations of queries and keys</td><td>Relative offsets emerge in the dot product.</td></tr><tr><th scope="row">ALiBi <span>2021</span></th><td>A bias on attention logits</td><td>Distance creates a head-specific recency bias.</td></tr></tbody></table></div><p class="fine">These are three influential methods, not an exhaustive taxonomy. Learned absolute embeddings and other relative-position schemes are outside this first guide.</p></section>
-    <section class="code-section"><div><p class="eyebrow">FROM PICTURE TO CODE</p><h2>The original signal,<br>in a few lines.</h2><p>A minimal NumPy implementation. Positions index rows; embedding components index columns. The demo above computes the same formula in JavaScript.</p><a href="https://github.com/RishabhPatil/pe-understanding/blob/main/public/math.js" data-event="source_click">Inspect the playground’s math ↗</a></div><div class="code-box"><div class="code-header"><span>sinusoidal.py</span><button id="copy-code" aria-label="Copy Python implementation">Copy code</button></div><pre><code id="code-snippet">import numpy as np
-
-def positional_encoding(length, dim, base=10_000):
-    assert dim &gt; 0 and dim % 2 == 0
-    positions = np.arange(length)[:, None]
-    pairs = np.arange(0, dim, 2)
-    angles = positions / base ** (pairs / dim)
-
-    pe = np.empty((length, dim))
-    pe[:, 0::2] = np.sin(angles)
-    pe[:, 1::2] = np.cos(angles)
-    return pe</code></pre></div></section>
-    <section id="references" class="article-section references"><div><p class="eyebrow">GO TO THE SOURCE</p><h2>Ideas worth reading.</h2><p>This guide explains established research.<br>The original contributions belong to the papers below.</p></div><ol><li><a href="https://arxiv.org/abs/1706.03762" data-event="reference_click"><span>01</span><div><strong>Attention Is All You Need</strong><small>Vaswani et al. · 2017 · Sinusoidal encoding</small></div><span>↗</span></a></li><li><a href="https://arxiv.org/abs/2104.09864" data-event="reference_click"><span>02</span><div><strong>RoFormer</strong><small>Su et al. · 2021 · Rotary position embedding</small></div><span>↗</span></a></li><li><a href="https://arxiv.org/abs/2108.12409" data-event="reference_click"><span>03</span><div><strong>Train Short, Test Long</strong><small>Press et al. · 2021 · Attention with linear biases</small></div><span>↗</span></a></li></ol></section>
-    <section class="closing"><div><p class="eyebrow">KEEP THE CONVERSATION GOING</p><h2>Useful in your work?</h2><p>Cite the guide, share a correction, or build on the source.</p></div><div class="closing-actions"><a class="primary" href="./citation.bib" download data-event="citation_download">Download citation ↓</a><a href="https://github.com/RishabhPatil/pe-understanding/issues/new">Suggest a correction ↗</a></div></section>
+    <section class="approach" aria-labelledby="approach-title"><p class="eyebrow">ABOUT THIS COLLECTION</p><div><h2 id="approach-title">Read the idea.<br>Inspect the construction.</h2><p>A growing home for my technical essays and research explorations. The aim is to connect explanations with inspectable examples and the original sources, making it easier to return to a topic and go deeper.</p><a class="text-link" href="https://github.com/RishabhPatil/learn/issues/new">Suggest a correction or a paper <span aria-hidden="true">↗</span></a></div></section>
   </main>
-  <footer><span>Position, Explained · Rishabh Patil</span><div><a href="https://rishabhpatil.github.io/learn/">All learning &amp; research</a><a href="./privacy.html">Privacy</a><button id="privacy-settings">Analytics preferences</button><a href="https://github.com/RishabhPatil/pe-understanding">GitHub ↗</a></div></footer>
-  <aside id="consent" class="consent" aria-label="Optional analytics" hidden><div><strong>Help improve this guide?</strong><p>Optional Google Analytics measures visits and interactions. It loads only if you accept. <a href="./privacy.html">Privacy details</a></p></div><div class="consent-actions"><button id="decline-analytics">Decline</button><button id="accept-analytics" class="primary">Accept analytics</button><button id="close-consent" aria-label="Close analytics preferences">×</button></div></aside><div class="sr-only" role="status" id="status"></div>
+  <footer class="wrap"><span>Learning & Research · Rishabh Patil</span><div><a href="/">Personal homepage</a><a href="./positional-encoding/privacy.html">Privacy</a><button id="privacy-settings" type="button">Analytics preferences</button><a href="https://github.com/RishabhPatil/learn">Page source ↗</a></div></footer>
+  <p id="analytics-status" class="wrap" role="status"></p>
+  <aside id="consent" class="consent" aria-labelledby="consent-title" hidden><div><strong id="consent-title">Help understand how these guides are used?</strong><p>Optional Google Analytics measures visits and interactions across Learn. It loads only if you accept. <a href="./positional-encoding/privacy.html">Privacy details</a></p></div><div class="consent-actions"><button id="decline-analytics" type="button">Decline</button><button id="accept-analytics" class="primary" type="button">Accept analytics</button></div></aside>
 </body>
 </html>

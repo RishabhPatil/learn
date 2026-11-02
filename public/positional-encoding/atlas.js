@@ -4,8 +4,8 @@ import { methods, furtherReading } from './atlas-data.js';
 import { referenceWriteups as references } from './atlas-reference.js';
 import { buildContext, coordinates, phase, pairInfo, eligibleQueries, axesFor, defaults, PAIRS, DIM, encodingComponents, relativeEncoding } from './atlas-math.js';
 import { PositionScene } from './atlas-scene.js';
-import { analyticsId } from './config.js';
-import { createAnalytics } from './analytics.js';
+import { analyticsId } from '../config.js';
+import { createAnalytics } from '../analytics.js';
 
 const $=id=>document.getElementById(id);
 const analytics=createAnalytics({window,document,id:analyticsId});
