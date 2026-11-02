@@ -1,6 +1,8 @@
 # Learn — Learning & Research
 
-Technical essays, research notes, and interactive explorations by Rishabh Patil. The collection includes Position, Explained and Normalization Explained.
+A visual notebook for learning and research by Rishabh Patil. I learn by seeing and experimenting; this site shares that way of understanding deep learning with others. The collection includes Position, Explained and Normalization Explained.
+
+Every article starts with a question that an interactive visual can answer: change one thing, observe the result, and explain why it happened. Guided prose and primary sources support the experiment. See the [visual learning principles](docs/article-orchestrator-plan.md#visual-learning-mission) and [topic inventory](docs/article-backlog.md#reader-requested-visual-topics).
 
 **Website:** https://rishabhpatil.github.io/learn/
 

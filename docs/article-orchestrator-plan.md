@@ -4,14 +4,29 @@ Build a collection of interactive scientific references for software engineers. 
 
 Repository: `RishabhPatil/learn`. Site root: `https://rishabhpatil.github.io/learn/`. The existing Position Atlas establishes the reading and visualization style. Preserve it while adding separate articles.
 
+## Visual learning mission
+
+The author learns and thinks visually. This collection shares that way of understanding with other people: **make a concept visible, let the reader change it, and help them explain what happened.** An article is not complete merely because its prose and paper list are comprehensive.
+
+Design the visual experiment before drafting the long explanation:
+
+1. Start with one reader question or misconception and a small, inspectable example.
+2. Name what the reader changes, what stays fixed, and the observable consequence. Make the consequence visible in the main view.
+3. Invite a prediction, then let the reader act. Show a short explanation tied to the current result; offer a reset for comparison.
+4. Use consistent colors and labels to connect the input, operation, and output. Prefer one meaningful control per guided step; disclose the rest in Explore.
+5. Make the experience work through touch and keyboard as well as a mouse. Motion must be pausable or replaceable by stepping; respect reduced-motion preferences.
+6. State whether the scene shows exact arithmetic on illustrative data, a geometric analogy, or a measured model result. Do not suggest that a toy vector has learned semantic meaning.
+
+Acceptance question: **Can a new reader explain what changed and why after manipulating the visual, without first reading every paragraph?** If not, simplify the experiment before adding more text or controls. Scientific depth stays available through equations, exact values, and primary references on demand.
+
 ## Execution contract
 
 The orchestrator owns topic selection, integration, verification, and delivery. It must actually launch subagents when this plan is executed; describing their future work is not completion.
 
 Use these defaults unless the user supplies different constraints:
 
-- Generate or refresh 12 candidate topics, shortlist 3, and implement 1 complete article per run.
-- Begin with Normalization unless research reveals a stronger candidate or the user chooses another topic.
+- Refresh the persistent inventory in `docs/article-backlog.md`; evaluate up to 12 candidates for the current run, shortlist 3, and implement 1 complete article. Preserve all reader-requested ideas even when they are outside this run’s shortlist.
+- Read publication status in the backlog first. Positional encoding and Normalization are already published; do not restart them. Inference memory is the current next recommendation unless research or the user changes that choice.
 - Keep the remaining topics in an ordered backlog. A larger requested batch repeats the complete article cycle sequentially.
 - Use the existing static HTML, CSS, JavaScript, Node tests, and GitHub Pages workflow. Prefer exact browser-local examples without model downloads or paid services.
 - Use the current checkout when suitable. Inspect its instructions and changes first; preserve unrelated work.
@@ -19,7 +34,7 @@ Use these defaults unless the user supplies different constraints:
 
 ## Candidate article backlog
 
-These are editorial starting points, not claims that all proposed demonstrations or literature surveys are already implemented or verified.
+The table below records the original editorial starting points. The [persistent backlog](article-backlog.md), including its reader-requested visual topics, is authoritative for coverage and publication status. These proposals are not claims that their demonstrations or literature surveys are implemented or fully verified.
 
 | Priority | Article question | Horizontal connection | Signature interactive example | Scope limit |
 | --- | --- | --- | --- | --- |
@@ -44,7 +59,7 @@ Launch three short research tasks, bounded by the available agent limit:
 2. **Teaching designer:** propose one concrete interaction and one common misconception per candidate. Reject ideas whose value is primarily a large comparison table or a paper list.
 3. **Research skeptic:** check primary-source availability, disputed terminology, overlap with existing articles, and whether the proposed example can demonstrate the claim.
 
-Each scout returns six concise candidates or evaluations. The orchestrator merges duplicates and records the final 12 in `docs/article-backlog.md` when executing.
+Each scout returns six concise candidates or evaluations. The orchestrator merges duplicates and records the evaluated shortlist in `docs/article-backlog.md` when executing, preserving the full inventory and prior publication status.
 
 Score each candidate from 0–5 on cross-domain usefulness (25%), visual teaching potential (25%), scientific verifiability (20%), distinctive contribution (15%), and implementation feasibility (15%). Record the reason for each score; the weights are editorial choices, not research measurements. Select the best three with varied mechanisms and audiences, rather than three near-identical Transformer variants.
 
