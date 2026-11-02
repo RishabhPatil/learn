@@ -32,7 +32,7 @@ export function createAnalytics({ window: win, document: doc, id }) {
       cookie_expires: 60 * 60 * 24 * 180,
       page_location: win.location.origin + win.location.pathname,
       page_referrer: referrer,
-      page_title: /^\/learn\/?(?:index\.html)?$/.test(win.location.pathname) ? 'Learn — Learning & Research' : win.location.pathname.endsWith('/atlas.html') ? 'The Position Atlas' : 'Position, Explained'
+      page_title: /^\/learn\/?(?:index\.html)?$/.test(win.location.pathname) ? 'Learn — Learning & Research' : /^\/learn\/normalization\/(?:index\.html)?$/.test(win.location.pathname) ? 'Normalization Explained' : win.location.pathname.endsWith('/atlas.html') ? 'The Position Atlas' : 'Position, Explained'
     });
     const script = doc.createElement('script');
     script.async = true;
@@ -58,7 +58,7 @@ export function createAnalytics({ window: win, document: doc, id }) {
   }
   function track(event, method) {
     if (!available || choice !== 'accepted' || !started || !allowedEvents.has(event)) return;
-    const props = ['sinusoidal', 'rope', 'alibi', 'none', 'learned', 'shaw', 't5', 'pi', 'yarn', 'axial', 'mixed', 'mrope', 'interleaved', 'mrope-i', 'mhrope', 'circle', 'vrope', 'videorope', 'v2pe', 'time-mrope'].includes(method) ? { method } : {};
+    const props = ['sinusoidal', 'rope', 'alibi', 'none', 'learned', 'shaw', 't5', 'pi', 'yarn', 'axial', 'mixed', 'mrope', 'interleaved', 'mrope-i', 'mhrope', 'circle', 'vrope', 'videorope', 'v2pe', 'time-mrope', 'layernorm', 'rmsnorm', 'batchnorm', 'groupnorm'].includes(method) ? { method } : {};
     gtag('event', event, props);
   }
   start();

@@ -52,6 +52,25 @@ test('missing ID, localhost, DNT and GPC never load analytics', () => {
     const f = fixture(options); f.api.setChoice('accepted'); assert.equal(f.api.available, false); assert.equal(f.scripts.length, 0);
   }
 });
+test('normalization has its own identity, one pageview, and only fixed event labels', () => {
+  for (const path of ['/learn/normalization/', '/learn/normalization/index.html']) {
+    const f = fixture({ path });
+    f.window.location.hash = '#values=1,2,3,4';
+    f.api.setChoice('accepted'); f.api.setChoice('accepted');
+    const commands = f.window.dataLayer.map(args => [...args]);
+    assert.equal(f.scripts.length, 1);
+    assert.equal(commands.filter(c => c[1] === 'page_view').length, 1);
+    const config = commands.find(c => c[0] === 'config')[2];
+    assert.equal(config.page_title, 'Normalization Explained');
+    assert.equal(config.page_location, 'https://rishabhpatil.github.io' + path);
+    for (const method of ['layernorm', 'rmsnorm', 'batchnorm', 'groupnorm']) {
+      f.api.track('explorer_interaction', method);
+      assert.deepEqual([...f.window.dataLayer.at(-1)], ['event', 'explorer_interaction', { method }]);
+    }
+    f.api.track('explorer_interaction', '[1,2,3,4]');
+    assert.deepEqual([...f.window.dataLayer.at(-1)][2], {});
+  }
+});
 test('blocked storage is safe and event data is restricted to predefined values', () => {
   const f = fixture({ blockedStorage: true }); f.api.setChoice('accepted');
   const count = f.window.dataLayer.length; f.api.track('visitor@example.com'); assert.equal(f.window.dataLayer.length, count);

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Normalization Explained — Learn</title>
+  <meta name="description" content="Which numbers are normalized together? Explore LayerNorm, RMSNorm, BatchNorm and GroupNorm through exact, interactive vector and tensor examples.">
+  <meta name="author" content="Rishabh Patil">
+  <meta name="theme-color" content="#f7f6f0">
+  <link rel="canonical" href="https://rishabhpatil.github.io/learn/normalization/">
+  <meta property="og:title" content="Normalization Explained">
+  <meta property="og:description" content="Select a number. See which values share its statistics. Change the input and inspect the result.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://rishabhpatil.github.io/learn/normalization/">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./style.css">
+  <script type="module" src="./app.js"></script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Normalization Explained","description":"Which numbers are normalized together, and what does centering change?","url":"https://rishabhpatil.github.io/learn/normalization/","author":{"@type":"Person","name":"Rishabh Patil","url":"https://rishabhpatil.github.io/"},"datePublished":"2026-11-01","dateModified":"2026-11-01","isPartOf":{"@type":"CollectionPage","name":"Learn","url":"https://rishabhpatil.github.io/learn/"}}</script>
+</head>
+<body class="norm-body">
+  <a class="skip" href="#lesson">Skip to lesson</a>
+  <header class="site-header"><a class="home-link" href="../">← Learn</a><span class="atlas-title">Normalization Explained</span><button id="open-reference" type="button">Notes & sources</button></header>
+  <main class="walkthrough-layout">
+    <aside class="lesson-pane" aria-label="Guided lesson">
+      <div class="method-picker"><label class="sr-only" for="method">Normalization method</label><select id="method"><option value="layer">01 · LayerNorm</option><option value="rms">02 · RMSNorm</option><option value="batch">03 · BatchNorm</option><option value="group">04 · GroupNorm</option></select></div>
+      <div class="lesson-scroll" id="lesson" tabindex="-1">
+        <div class="method-heading"><p class="eyebrow">WHICH NUMBERS BELONG TOGETHER?</p><h1 id="method-title">LayerNorm</h1><p id="method-summary" class="method-summary"></p></div>
+        <section class="tour-lesson" aria-labelledby="tour-title"><p class="eyebrow" id="step-label"></p><h2 id="tour-title"></h2><p id="tour-body"></p><p class="tour-observation" id="tour-observation" aria-live="polite"></p><button class="experiment-button" id="experiment" type="button"></button><p id="experiment-description" class="micro"></p></section>
+        <details class="reading-help"><summary>How to read this view</summary><p>Each cell is one activation: a number inside a network. Click or keyboard-select a cell to inspect it. Green cells are the numbers pooled to calculate its statistics (the <strong>reduction set</strong>); the heavy outline marks your selected cell. For BatchNorm inference, green shows the training reduction set, while fixed stored statistics supply the calculation. Output bars show the result of the formula, not probabilities or learned predictions.</p><p>For the tensor, n is sample, c is channel, and s is spatial slot. These are indices, not physical distances. Open exact data in the visual for all values.</p></details>
+        <div class="lesson-tools"><button id="reset" type="button">Restart method</button><button id="share" type="button">Link to this view</button></div>
+        <p class="micro">A browser-local mathematical example. No trained model or model-performance claim.</p>
+      </div>
+      <nav class="tour-navigation" aria-label="Lesson steps"><button id="previous" type="button">← Previous</button><span id="progress"></span><button id="next" type="button">Next →</button></nav>
+    </aside>
+    <section class="visual-pane" aria-label="Interactive normalization visualization"><div class="visual-heading"><span id="view-label">ONE VECTOR · FOUR FEATURES</span><button id="open-settings" type="button">Explore settings</button></div><div id="visualization"></div></section>
+  </main>
+  <dialog id="settings-dialog" aria-labelledby="settings-title">
+    <div class="dialog-heading"><h2 id="settings-title">Explore the numbers</h2><button type="button" data-close aria-label="Close settings">×</button></div>
+    <p>Changing a scientific setting enters Explore. Previous/Next and Restart restore guided examples.</p>
+    <div class="settings-grid">
+      <label>Selected activation<select id="selected-cell"></select></label>
+      <label>Its input value (−1000 to 1000)<input id="input-value" type="number" min="-1000" max="1000" step="any"></label>
+      <label>Epsilon ε (inside the square root)<select id="epsilon"><option value="1e-8">0.00000001</option><option value="0.00001">0.00001 · default</option><option value="0.01">0.01</option><option value="1">1 · expose the effect</option></select></label>
+      <label id="groups-field">Number of groups<select id="groups"><option value="1">1 · all channels per sample</option><option value="2">2 · two channels per group</option><option value="4">4 · one channel per group</option></select></label>
+      <label id="mode-field">BatchNorm statistics<select id="mode"><option value="train">Training · current batch</option><option value="inference">Inference · fixed stored values</option></select></label>
+      <label class="checkbox-label"><input id="affine" type="checkbox"><span id="affine-label">Apply gain 2 and bias 1</span></label>
+    </div>
+    <p id="stored-note" class="micro">Illustrative stored means: [2.5, 3.5, 6.5, 7.5]; variances: [2, 2, 2, 2]. These remain fixed; this page does not update a running average.</p>
+    <p class="micro">Uniform gain/bias are a convenient special case of per-feature or per-channel learned parameters. Here they are fixed examples, not learned values. Epsilon has squared activation units.</p>
+    <div class="lesson-tools"><button id="zero-input" type="button">Set all inputs to 0</button><button id="constant-input" type="button">Set all inputs to 3</button><button id="baseline-input" type="button">Restore baseline inputs</button></div>
+    <p id="settings-status" role="status"></p>
+    <button type="button" data-close>Done</button>
+  </dialog>
+  <dialog id="reference-dialog" aria-labelledby="reference-title">
+    <div class="dialog-heading"><h2 id="reference-title">Definitions & sources</h2><button type="button" data-close aria-label="Close notes">×</button></div>
+    <div id="reference-content"></div>
+    <details><summary>Scope, conventions & provenance</summary><p>Inputs are illustrative activations in arbitrary units. Variance divides by the number of values, not one fewer. Normalized values z are dimensionless; final output y includes any gain/bias. JavaScript double precision evaluates the formulas locally; this is not a float16 kernel or a training simulation.</p><p>LayerNorm and RMSNorm here reduce four features per vector. BatchNorm pools samples and spatial slots per channel. GroupNorm pools grouped channels and spatial slots within one sample. A single GroupNorm group is not generally the same as feature-only LayerNorm.</p><p>BatchNorm training uses current-batch population variance. PyTorch's running-variance update uses an unbiased estimate; our fixed inference values are illustrative stored statistics, not that update. We cover tracked-stat inference; implementations can also use batch statistics at evaluation time.</p><p>These examples demonstrate arithmetic and dependencies. They do not show which method trains best, guarantee stability, make outputs Gaussian, or benchmark hardware. Conditional norms, residual placement and normalization alternatives are outside scope.</p><p>Original educational synthesis of the cited methods, not a claim of new research. By Rishabh Patil · Published and sources reviewed November 1, 2026. Implementation conventions pinned to PyTorch 2.9.0. <a href="https://github.com/RishabhPatil/learn/issues/new">Suggest a correction</a>.</p></details>
+    <footer><a href="../">Learn collection</a> · <a href="../positional-encoding/atlas.html">Position Atlas</a> · <a href="../positional-encoding/privacy.html">Privacy</a> · <a href="https://github.com/RishabhPatil/learn/tree/main/public/normalization">Page source</a><p><button id="privacy-settings" type="button">Analytics preferences</button></p><p id="analytics-status" role="status"></p></footer>
+  </dialog>
+  <dialog id="share-dialog" aria-labelledby="share-title"><div class="dialog-heading"><h2 id="share-title">Link to this view</h2><button type="button" data-close aria-label="Close link">×</button></div><p>Includes the method, step, selection and Explore settings. Input values stay in the URL fragment; analytics never receives them.</p><label>Shareable URL<input id="share-url" type="text" readonly></label><button id="copy-link" type="button">Copy link</button><p id="share-status" role="status"></p></dialog>
+  <aside id="consent" class="consent" aria-labelledby="consent-title" hidden><strong id="consent-title">Help understand how these guides are used?</strong><p>Optional analytics loads only if you accept. <a href="../positional-encoding/privacy.html">Privacy details</a></p><div class="consent-actions"><button id="decline-analytics" type="button">Decline</button><button id="accept-analytics" type="button">Accept analytics</button></div></aside>
+  <noscript>This interactive article needs JavaScript for its local calculations. Read the <a href="https://github.com/RishabhPatil/learn/blob/main/docs/articles/normalization.md">method definitions and source notes</a>.</noscript>
+</body>
+</html>

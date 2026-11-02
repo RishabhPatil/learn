@@ -1,6 +1,6 @@
 # Learn — Learning & Research
 
-Technical essays, research notes, and interactive explorations by Rishabh Patil. The first project is Position, Explained.
+Technical essays, research notes, and interactive explorations by Rishabh Patil. The collection includes Position, Explained and Normalization Explained.
 
 **Website:** https://rishabhpatil.github.io/learn/
 
@@ -12,7 +12,11 @@ The desktop atlas has a guided explanation on the left and a synchronized visual
 
 There is no context builder or attention simulator. Patches carry positional IDs; pixel colors texture their tiles. The scenes are index geometry, **not trained hidden embeddings**. Configuration links preserve the walkthrough step and positional construction; older links without a step open the free explorer. Restart restores a deterministic teaching example. JSON exports preserve positional data. See [the implementation and source notes](docs/atlas.md).
 
-The site has no runtime framework or package dependencies. The renderer is a small local Canvas implementation of orthographic 3D projection.
+**[Normalization Explained](https://rishabhpatil.github.io/learn/normalization/)** answers which numbers share normalization statistics and what centering changes. Four five-step lessons cover LayerNorm, RMSNorm, BatchNorm and GroupNorm. Select a feature/tensor cell, inspect reduction axes and precise outputs, shift or double a vector, change a companion sample, adjust epsilon and group count, and compare training with fixed-statistic inference. Optional gain/bias and exact tables remain on demand. Links preserve the full Explore state. On phones, the visualization stays above the scrollable lesson and results appear first when relevant.
+
+The examples evaluate established formulas in JavaScript double precision on illustrative activations. They do not train models, update BatchNorm moving averages, or benchmark speed/accuracy. See the [source-to-test brief](docs/articles/normalization.md), [ranked backlog](docs/article-backlog.md), and [acceptance record](docs/articles/normalization-acceptance.md). Published November 1, 2026; author Rishabh Patil. [Corrections](https://github.com/RishabhPatil/learn/issues/new) are welcome.
+
+The site has no runtime framework or package dependencies. Position uses a small local Canvas implementation of orthographic 3D projection; Normalization uses HTML cells and SVG output charts.
 
 ## Local development
 
@@ -26,7 +30,7 @@ npm run build
 node scripts/serve.mjs --dist
 ```
 
-Reload the browser after edits. Stop the server with Ctrl+C. Tests exercise positional math and analytics consent behavior. The build copies only `public/` to `dist/`, so documentation, tests, and local evidence are not deployed.
+Reload the browser after edits. Stop the server with Ctrl+C. Tests exercise positional and normalization math, walkthrough state, and analytics consent behavior. The build copies only `public/` to `dist/`, so documentation, tests, and local evidence are not deployed. Optional browser acceptance uses `node scripts/check-normalization.mjs` with a separately available Playwright package (`PLAYWRIGHT_MODULE` can point to its module); it requires the preview server and writes ignored screenshots/check results under `evidence-private/normalization/`.
 
 ## GitHub Pages
 
@@ -64,6 +68,7 @@ Visitors choose whether to accept analytics. Browser privacy signals and local p
 | `public/positional-encoding/atlas-scene.js` | Mouse/keyboard-controlled 3D renderer |
 | `public/positional-encoding/atlas.js` | Method reference, fixed examples, selection, share/export UI |
 | `public/analytics.js` | Optional consent-gated GA4 integration |
+| `public/normalization/` | Four-method page/controller, pure math/state, lessons/sources, SVG renderer/styles |
 | `public/positional-encoding/privacy.html` | Visitor-facing privacy explanation |
 | `scripts/` | Build, preview, and evidence capture |
 | `tests/` | Formula and privacy behavior checks |

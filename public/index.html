@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="./learn.css">
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <script type="module" src="./learn.js"></script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"Learn — Learning & Research","url":"https://rishabhpatil.github.io/learn/","author":{"@type":"Person","name":"Rishabh Patil","url":"https://rishabhpatil.github.io/"},"hasPart":[{"@type":"TechArticle","headline":"Position, Explained","url":"https://rishabhpatil.github.io/learn/positional-encoding/"},{"@type":"WebPage","name":"The Position Atlas","url":"https://rishabhpatil.github.io/learn/positional-encoding/atlas.html"}]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"Learn — Learning & Research","url":"https://rishabhpatil.github.io/learn/","author":{"@type":"Person","name":"Rishabh Patil","url":"https://rishabhpatil.github.io/"},"hasPart":[{"@type":"TechArticle","headline":"Position, Explained","url":"https://rishabhpatil.github.io/learn/positional-encoding/"},{"@type":"WebPage","name":"The Position Atlas","url":"https://rishabhpatil.github.io/learn/positional-encoding/atlas.html"},{"@type":"TechArticle","headline":"Normalization Explained","url":"https://rishabhpatil.github.io/learn/normalization/"}]}</script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
@@ -31,7 +31,7 @@
       <div class="intro-bottom"><p>Notes on machine learning, from the underlying mathematics to the details you can see and explore.</p><span class="margin-note">READ · EXPLORE · REVISIT</span></div>
     </section>
     <section class="collection" aria-labelledby="collection-title">
-      <div class="section-label"><h2 id="collection-title">The collection</h2><span>01 / POSITIONAL ENCODING</span></div>
+      <div class="section-label"><h2 id="collection-title">The collection</h2><span>02 / INTERACTIVE ARTICLES</span></div>
       <article class="entry">
         <div class="entry-copy">
           <p class="eyebrow">INTERACTIVE ESSAY & RESEARCH ATLAS</p>
@@ -63,6 +63,35 @@
               <path d="M276 174H264" stroke="#abc7b0"/>
             </svg>
             <figcaption><span>A token sequence. A spatial structure.</span><span aria-hidden="true">↗</span></figcaption>
+          </figure>
+        </a>
+      </article>
+      <article class="entry" style="border-top:1px solid var(--line)">
+        <div class="entry-copy">
+          <p class="eyebrow">INTERACTIVE MATHEMATICAL REFERENCE</p>
+          <h3><a href="./normalization/">Normalization,<br><em>Explained.</em></a></h3>
+          <p>Which numbers are normalized together, and what does centering change? Follow one activation through LayerNorm, RMSNorm, BatchNorm and GroupNorm.</p>
+          <ul class="tags" aria-label="Topics"><li>Activations</li><li>Reduction axes</li><li>Training & inference</li></ul>
+          <div class="entry-actions"><a class="primary" href="./normalization/">Explore normalization <span aria-hidden="true">↗</span></a></div>
+          <p class="entry-note">4 methods · exact local calculations · controlled experiments</p>
+        </div>
+        <a class="figure-link" href="./normalization/" aria-label="Open Normalization Explained">
+          <figure>
+            <div class="figure-label"><span>WHICH NUMBERS BELONG TOGETHER?</span><span>FIG. 02</span></div>
+            <svg viewBox="0 0 480 340" role="img" aria-labelledby="norm-diagram-title norm-diagram-description">
+              <title id="norm-diagram-title">A four-feature LayerNorm example</title>
+              <desc id="norm-diagram-description">Inputs 1, 2, 3 and 4 share mean 2.5 and variance 1.25. Centering and rescaling produces approximately minus 1.34, minus 0.45, 0.45 and 1.34.</desc>
+              <g font-family="monospace" text-anchor="middle">
+                <text x="240" y="43" fill="#b1c9ba" font-size="12">ONE VECTOR · FOUR FEATURES</text>
+                <g fill="#2d5142" stroke="#8caf91"><rect x="45" y="70" width="80" height="68" rx="5"/><rect x="148" y="70" width="80" height="68" rx="5"/><rect x="251" y="70" width="80" height="68" rx="5"/><rect x="354" y="70" width="80" height="68" rx="5"/></g>
+                <g fill="#e2ecdc" font-size="26"><text x="85" y="114">1</text><text x="188" y="114">2</text><text x="291" y="114">3</text><text x="394" y="114">4</text></g>
+                <path d="M85 151V170H394V151M240 170V200" fill="none" stroke="#a9bd9d"/>
+                <text x="240" y="224" fill="#e5d5a5" font-size="12">subtract mean · divide by √(variance + ε)</text>
+                <g fill="#c4d8bd" font-size="20"><text x="85" y="278">−1.34</text><text x="188" y="278">−0.45</text><text x="291" y="278">0.45</text><text x="394" y="278">1.34</text></g>
+                <text x="240" y="315" fill="#b1c9ba" font-size="11">LayerNorm · ε = 0.00001 · rounded outputs</text>
+              </g>
+            </svg>
+            <figcaption><span>Select the values. Inspect the calculation.</span><span aria-hidden="true">↗</span></figcaption>
           </figure>
         </a>
       </article>
