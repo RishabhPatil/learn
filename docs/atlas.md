@@ -10,9 +10,17 @@ Reviewed November 1, 2026. The catalog is deliberately extensible and explicitly
 
 The renderer uses orthographic projection and a depth-sorted painter's algorithm. Mouse drag and arrow keys orbit; the wheel and +/- zoom. There is no WebGL dependency, external CDN, or model download. Mouse picking chooses a displayed glyph; the token A/B dropdowns and full coordinate table are the exact accessible alternative when glyphs overlap. `Reset view` restores the camera.
 
+## Guided reading
+
+On desktop the left pane holds the scientific narrative and the right pane holds the synchronized construction. Five steps lead from source tokens to IDs, encoding components, a concrete comparison, and free exploration. Previous/Next and the numbered outline select deterministic presets; Restart resets the current method. Free exploration keeps the current settings and reveals all controls. Narrow screens stack the panes, with a bounded scrollable narrative and persistent Previous/Next controls below it.
+
+`atlas-tours.js` contains the method-specific narrative. `atlas-walkthrough.js` defines fixed token pairs and component selections; the controller updates the live observation from the actual displayed numbers. It never claims to run a trained model. Arrow keys on the focused step heading navigate the guide; arrow keys on the canvas continue to orbit the scene. Links include zero-based `step`; older configuration links without this field open the free explorer.
+
+The interaction pattern is inspired by [Brendan Bycroft’s LLM Visualization](https://bbycroft.net/llm); no architecture-inference code is imported from that project.
+
 ## Reference and examples
 
-Each method starts with two short paragraphs, equations, notation, primary-source citations, and an explicit distinction between the published construction and the example. The notes live in `public/atlas-reference.js`; method metadata and scope live in `public/atlas-data.js`.
+Each method has a short introduction and a five-step narrative. Expand “Method notes & primary sources” for the full scientific introduction, equations, notation, primary-source citations, and the distinction between the published construction and the example. The notes live in `public/atlas-reference.js`; method metadata and scope live in `public/atlas-data.js`.
 
 Fixed presets provide text, text plus one image, three video frames, or two interleaved images. All visuals use a 4×4 patch grid over a locally generated 48×48 texture. There is no context builder, editable prompt, image upload, or model tokenizer. Two-dimensional vision methods exclude text and ignore frame order. Text examples are disabled for vision-only methods.
 
@@ -47,7 +55,7 @@ Learned absolute, Shaw, and T5 values are deterministic example tables, not lear
 2. Add a source-linked catalog entry in `public/atlas-data.js` and a scientific introduction in `public/atlas-reference.js`, with explicit scope and limitations.
 3. Implement coordinate, phase, vector, or positional-bias behavior in `public/atlas-math.js`. Keep encoding quantities separate from model inference.
 4. Add independent mathematical checks: boundary cases, expected coordinates, components, and invariants from the construction.
-5. Add only necessary parameter controls. Do not draw a new geometry when a method changes frequencies or positional biases alone.
+5. Add a method-specific walkthrough and verify its selected examples. Add only necessary parameter controls. Do not draw a new geometry when a method changes frequencies or positional biases alone.
 6. Verify fixed image/video/text examples in the browser, including keyboard operation and mobile layout.
 7. If the exact construction is not yet checked, keep it in `furtherReading`, not the implemented selector.
 

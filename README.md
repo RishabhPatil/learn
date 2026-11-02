@@ -8,9 +8,9 @@ The introductory guide covers sinusoidal encoding, RoPE, and ALiBi with inspecta
 
 **[The Position Atlas](https://rishabhpatil.github.io/pe-understanding/atlas.html)** expands this into 20 explorable configurations: foundational absolute/relative encodings, rotary context extension, 2D axial/mixed RoPE, M-RoPE, interleaving, MRoPE-I, MHRoPE, Circle-RoPE, VRoPE, VideoRoPE, V2PE, and time-aligned MRoPE. It includes a neutral no-position baseline. It is a curated catalog, not an exhaustive literature claim.
 
-Each method starts with a concise scientific explanation, equations, notation, primary sources, and explicit illustration limits. Fixed text/image/video examples make position IDs, additive vectors, relative terms, frequency allocation, and rotary phases inspectable. Drag or use arrow keys to orbit the 3D geometry; scroll or use +/- to zoom. Click to select token B, shift-click for token A, or use the accessible dropdowns and data tables.
+The desktop atlas has a guided explanation on the left and a synchronized visualization on the right. Each method has five Previous/Next steps: input tokens, position IDs, encoding, comparison, and free exploration. Scientific notes, equations, notation, sources, and limits remain in the left pane. Fixed text/image/video examples make position IDs, additive vectors, relative terms, frequency allocation, and rotary phases inspectable. Drag or use arrow keys to orbit the 3D geometry; scroll or use +/- to zoom. Click to select token B, shift-click for token A, or use the accessible dropdowns and data tables.
 
-There is no context builder or attention simulator. Patches carry positional IDs; pixel colors texture their tiles. The scenes are index geometry, **not trained hidden embeddings**. Configuration links and JSON exports preserve the positional construction. See [the implementation and source notes](docs/atlas.md).
+There is no context builder or attention simulator. Patches carry positional IDs; pixel colors texture their tiles. The scenes are index geometry, **not trained hidden embeddings**. Configuration links preserve the walkthrough step and positional construction; older links without a step open the free explorer. Restart restores a deterministic teaching example. JSON exports preserve positional data. See [the implementation and source notes](docs/atlas.md).
 
 The site has no runtime framework or package dependencies. The renderer is a small local Canvas implementation of orthographic 3D projection.
 
@@ -54,6 +54,9 @@ Visitors choose whether to accept analytics. Browser privacy signals and local p
 | `public/math.js` | Positional encoding formulas |
 | `public/atlas.html` | Scientific reference and fixed examples |
 | `public/atlas-data.js` | Sourced method catalog and scope notes |
+| `public/atlas-tours.js` | Five scientific walkthrough steps for each configuration |
+| `public/atlas-walkthrough.js` | Reproducible step presets and selections |
+| `public/atlas-walkthrough.css` | Responsive split-pane walkthrough layout |
 | `public/atlas-reference.js` | Scientific introductions, equations, and primary citations |
 | `public/atlas-math.js` | Position IDs, phases, vectors, and relative terms |
 | `public/atlas-scene.js` | Mouse/keyboard-controlled 3D renderer |
@@ -72,3 +75,5 @@ Visitors choose whether to accept analytics. Browser privacy signals and local p
 - Publish tagged releases and keep external citations separate from site-traffic metrics.
 
 This is an educational explanation of established methods, not a claim to have invented them. Links to the original papers appear alongside the relevant explanations.
+
+The guided layout is inspired by [Brendan Bycroft’s LLM Visualization](https://bbycroft.net/llm). The positional-encoding implementation and explanatory content are specific to this atlas.

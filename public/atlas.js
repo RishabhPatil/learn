@@ -1,3 +1,5 @@
+import { tours } from './atlas-tours.js';
+import { lessonPreset, stepNames } from './atlas-walkthrough.js';
 import { methods, furtherReading } from './atlas-data.js';
 import { referenceWriteups as references } from './atlas-reference.js';
 import { buildContext, coordinates, phase, pairInfo, eligibleQueries, axesFor, defaults, PAIRS, DIM, encodingComponents, relativeEncoding } from './atlas-math.js';
@@ -7,7 +9,7 @@ import { createAnalytics } from './analytics.js';
 
 const $=id=>document.getElementById(id);
 const analytics=createAnalytics({window,document,id:analyticsId});
-const state={method:'mrope',scene:'image',grid:4,prefix:'Find the red object',suffix:'Where is it now?',query:0,key:0,pair:0,view:'encoded',color:'texture',options:{...defaults}};
+const state={step:0,method:'mrope',scene:'image',grid:4,prefix:'Find the red object',suffix:'Where is it now?',query:0,key:0,pair:0,view:'encoded',color:'texture',options:{...defaults}};
 let context,positions,textures=[],statusTimer;
 const safeScene=new Set(['image','video','two-images','text']);
 function notify(message){$('status').textContent=message;clearTimeout(statusTimer);statusTimer=setTimeout(()=>$('status').textContent='',6500);}
@@ -20,6 +22,7 @@ function tuple(p){return '('+p.ids.map(fmt).join(', ')+')';}
 function readLink(){
   const params=new URLSearchParams(location.hash.slice(1));
   if(methods.some(m=>m.id===params.get('method')))state.method=params.get('method');
+  if(params.has('step'))state.step=Math.max(0,Math.min(4,Math.floor(Number(params.get('step')))||0));
   if(safeScene.has(params.get('scene')))state.scene=params.get('scene');
   for(const [name,min,max]of[['base',100,1000000],['scale',1,16],['stride',1,8],['radius',1,8],['angle',0,180],['head',0,2],['seed',1,99],['slope',0,.5],['increment',.0625,1]]){
     if(params.has(name)){const value=Number(params.get(name));if(Number.isFinite(value))state.options[name]=Math.max(min,Math.min(max,value));}
@@ -30,6 +33,10 @@ function readLink(){
   for(const name of['query','key','pair'])if(params.has(name))state[name]=Math.max(0,Math.floor(Number(params.get(name))||0));
 }
 readLink();
+const initialParams=new URLSearchParams(location.hash.slice(1));
+if(!initialParams.has('scene'))Object.assign(state,lessonPreset(state.method,state.step));
+else if(!initialParams.has('step'))state.step=4;
+else state.view=state.step===0?'source':'encoded';
 if(method().family==='Vision'&&state.scene==='text')state.scene='image';
 const hasLinkedQuery=new URLSearchParams(location.hash.slice(1)).has('query');
 const scene=new PositionScene($('space'),{onSelect(id,isQuery){if(isQuery){if(positions[id].excluded){notify('Select a visual token for this vision-only method.');return;}state.query=id;}else state.key=id;render();}});
@@ -69,12 +76,48 @@ function listMethods(){
   $('search-empty').hidden=entries.length>0;
 }
 function selectMethod(id){
-  state.method=id;
-  if(method().family==='Video')state.scene='video';
-  else if(method().family==='Vision')state.scene='image';
-  else if(method().family==='Foundations'||(['rope','pi','yarn'].includes(id)))state.scene='text';
-  else if(state.scene==='text')state.scene='image';
-  listMethods();scene.reset();rebuild(true);analytics.track('method_select',id);
+  state.method=id;state.step=0;
+  $('method-select').value=id;$('method-catalog').hidden=true;$('browse-methods').setAttribute('aria-expanded','false');
+  listMethods();goToStep(0,false);analytics.track('method_select',id);
+}
+function goToStep(index,focus=true){
+  const next=Math.max(0,Math.min(4,index));
+  if(next<4)Object.assign(state,lessonPreset(state.method,next));
+  else{state.step=4;state.view='encoded';}
+  setControls();scene.reset();rebuild(false);
+  document.querySelector('.lesson-scroll').scrollTop=0;
+  document.querySelector('.visual-scroll').scrollTop=0;
+  if(focus)$('tour-title').focus({preventScroll:true});
+}
+function renderTour(){
+  const step=tours[state.method][state.step];
+  $('lab-top').dataset.step=state.step;
+  $('tour-counter').textContent=`Step ${state.step+1} of 5`;
+  $('tour-short-progress').textContent=`${state.step+1} / 5`;
+  $('tour-title').textContent=step.title;$('tour-body').textContent=step.body;
+  $('tour-focus').textContent=stepNames[state.step].toUpperCase();
+  $('visual-step-label').textContent=`${String(state.step+1).padStart(2,'0')} / ${stepNames[state.step].toUpperCase()}`;
+  $('tour-prev').disabled=state.step===0;$('tour-next').disabled=state.step===4;
+  $('tour-next').textContent=state.step===4?'Complete ✓':'Next →';
+  $('tour-outline').replaceChildren(...stepNames.map((name,i)=>{
+    const button=element('button',undefined,'tour-dot');button.append(element('span',String(i+1)),element('small',name));
+    button.setAttribute('aria-label',`Step ${i+1}: ${name}`);if(i===state.step)button.setAttribute('aria-current','step');
+    button.addEventListener('click',()=>goToStep(i));return button;
+  }));
+  const eq=references[state.method].equations;
+  $('tour-equation').hidden=state.step===0||state.step===4;
+  $('tour-equation').replaceChildren(...eq.map(text=>element('code',text)));
+  const a=positions[state.query],b=positions[state.key];
+  let observation;
+  if(state.step===0)observation=`${context.tokens.length} tokens in the fixed sample. ${state.scene==='text'?'The dots follow sequence order.':'Each image tile is one patch token containing 12 × 12 pixels. The original grid is shown before assigning position IDs.'}`;
+  else if(state.step===1)observation=`Token A: ${a.token.label} → ${tuple(a)}. Token B: ${b.token.label} → ${tuple(b)}. ${method().geometry}`;
+  else if(method().kind==='rotary'||state.method==='sinusoidal'){
+    const info=pairInfo(state.method,state.pair,state.options),pa=phase(a,state.method,state.pair,state.options),pb=phase(b,state.method,state.pair,state.options);
+    observation=`Pair ${state.pair} uses ${info.name}, with frequency ${info.frequency.toPrecision(3)}. A has phase ${pa.toFixed(3)} rad and B has phase ${pb.toFixed(3)} rad; the difference is ${(pb-pa).toFixed(3)} rad.`;
+  }else observation=$('components-readout').textContent;
+  if(state.step===4)observation=method().experiment;
+  $('tour-observation').textContent=observation;
+  $('tour-hint').textContent=state.step===0?'Drag the scene to rotate it. Next assigns this method’s position IDs.':state.step===1?'The points now use the encoding’s indices. Next shows how those indices become a positional signal.':state.step===2?'Inspect a component or frequency pair. Next selects a different token pair for comparison.':state.step===3?'Change a positional parameter or select another token. The numerical observation updates with the visualization.':'The full explorer is available. Restart returns to the fixed walkthrough example; method notes and sources remain below.';
 }
 function setControls(){
   $('frequency-base').value=state.options.base;$('timing').value=state.options.timing;$('color-mode').value=state.color;
@@ -96,7 +139,7 @@ function render(){
   state.key=Math.min(state.key,positions.length-1);if(positions[state.key].excluded)state.key=eligible[0]??0;state.pair=Math.min(state.pair,PAIRS-1);
   const m=method();
   $('method-family').textContent=`${m.family.toUpperCase()} / ${m.year}`;$('method-name').textContent=m.name;$('method-summary').textContent=m.summary;$('method-source').href=m.source;
-  $('geometry-explanation').textContent=state.view==='source'?'Source layout keeps the original patch grid visible, independently of the chosen encoding. Switch to Position IDs to inspect the mathematical layout.':m.geometry;
+  $('geometry-explanation').textContent=state.view==='source'?(state.step===0?'The original token layout, before position IDs are assigned. Next applies this method’s coordinate rule.':'Source layout preserves the original patch grid independently of the chosen encoding.'):m.geometry;
   renderReference();$('method-experiment').textContent=m.experiment;$('method-limits').textContent=m.limits;
   $('frequency-description').textContent=m.frequency;
   $('geometry-caption').textContent=state.method==='vrope'?'3D parameterization · inspect all four IDs':state.view==='source'?'Input layout · independent of the encoding':'Position IDs · not hidden embeddings';
@@ -104,15 +147,18 @@ function render(){
   $('space-hint').textContent='Drag to orbit · zoom · click B · shift-click A';
   const selects=[['query-token',state.query],['key-token',state.key]];
   for(const[id,value]of selects){$(id).replaceChildren(...positions.map(p=>{const el=option(p.token.id,`${p.token.id} · ${p.token.label}`);if(p.excluded)el.disabled=true;return el;}));$(id).value=value;}
-  controlsForMethod();renderScene();renderInspector();renderComponents();renderFrequency();renderTable();
+  controlsForMethod();renderScene();renderInspector();renderComponents();renderFrequency();renderTable();renderTour();
   $('view-encoded').setAttribute('aria-pressed',String(state.view==='encoded'));$('view-source').setAttribute('aria-pressed',String(state.view==='source'));
 }
 function renderScene(){
   const records=positions.map(p=>{
     if(state.view!=='source')return p;
     const t=p.token;
-    const start=context.groups[t.group]?.start??0;
-    return {...p,point:t.type==='text'?[t.id*.35,-2,-2]:[start*.35+t.f*2+t.group*4,t.h,t.w]};
+    if(t.type!=='text')return {...p,point:[t.f*2+t.group*5,t.h,t.w+1]};
+    const before=t.id<(context.groups[0]?.start??context.tokens.length);
+    const groupBefore=context.groups.filter(g=>g.end<=t.id).at(-1);
+    const local=t.id-(groupBefore?.end??0);
+    return {...p,point:[(groupBefore?.id??0)*5,before?-2:6,local*1.7]};
   });
   const flat=['none','sinusoidal','learned','shaw','t5','alibi','rope','pi','yarn','v2pe','circle'].includes(state.method);
   scene.setData({records,axes:state.view==='source'?['context / frame','row','column']:axesFor(state.method),query:state.query,key:state.key,textures,colorMode:state.color,tiles:state.view==='source'||!flat});
@@ -165,13 +211,14 @@ function renderComponents(){
   $('component-table').replaceChildren(...av.map((v,i)=>{const row=element('tr');row.append(element('td',String(i)),element('td',fmt(v)),element('td',bv.length?fmt(bv[i]):'relative vector'));return row;}));
 }
 function renderFrequency(){
+  $('pair-select').value=state.pair;
   const rotary=method().kind==='rotary',sin=state.method==='sinusoidal';
   $('frequency-panel').hidden=!rotary&&!sin;
   if(!rotary&&!sin)return;
   $('frequency-strip').replaceChildren();
   if(rotary||sin)for(let j=0;j<PAIRS;j++){
     const info=pairInfo(state.method,j,state.options),button=element('button',info.name,'frequency-pair');button.dataset.axis=info.name;
-    button.append(element('small',String(j)));button.title=`Pair ${j}: ${info.name}, frequency ${info.frequency.toPrecision(3)}`;button.setAttribute('aria-label',button.title);button.setAttribute('aria-pressed',String(j===state.pair));button.addEventListener('click',()=>{state.pair=j;$('pair-select').value=j;renderFrequency();});$('frequency-strip').append(button);
+    button.append(element('small',String(j)));button.title=`Pair ${j}: ${info.name}, frequency ${info.frequency.toPrecision(3)}`;button.setAttribute('aria-label',button.title);button.setAttribute('aria-pressed',String(j===state.pair));button.addEventListener('click',()=>{state.pair=j;$('pair-select').value=j;renderFrequency();renderTour();});$('frequency-strip').append(button);
   }
   const svg=$('phase-wheel');svg.replaceChildren();
   const make=(tag,attrs,text)=>{const e=document.createElementNS('http://www.w3.org/2000/svg',tag);Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,v));if(text)e.textContent=text;return e;};
@@ -197,6 +244,17 @@ function populateReading(){
   $('further-reading').replaceChildren(...furtherReading.map(m=>{const item=element('div'),link=element('a',`${m.name} · ${m.year}`);link.href=m.url;item.append(link,element('p',m.note));return item;}));
 }
 
+$('method-select').replaceChildren(...['Foundations','Rotary & context','Vision','Multimodal','Video'].map(family=>{
+  const group=element('optgroup');group.label=family;group.append(...methods.filter(m=>m.family===family).map(m=>option(m.id,m.name)));return group;
+}));
+$('method-select').value=state.method;
+$('method-select').addEventListener('change',()=>selectMethod($('method-select').value));
+$('browse-methods').addEventListener('click',()=>{const open=$('method-catalog').hidden;$('method-catalog').hidden=!open;$('browse-methods').setAttribute('aria-expanded',String(open));if(open)$('method-search').focus();});
+$('tour-prev').addEventListener('click',()=>goToStep(state.step-1));
+$('tour-next').addEventListener('click',()=>goToStep(state.step+1));
+$('restart-tour').addEventListener('click',()=>goToStep(0));
+$('explore-freely').addEventListener('click',()=>goToStep(4));
+$('tour-title').addEventListener('keydown',event=>{if(event.key==='ArrowRight'||event.key==='ArrowLeft'){event.preventDefault();goToStep(state.step+(event.key==='ArrowRight'?1:-1));}});
 $('method-search').addEventListener('input',listMethods);$('family-filter').addEventListener('change',listMethods);
 $('example').addEventListener('change',()=>{state.scene=$('example').value;rebuild(true);scene.reset();});
 $('timing').addEventListener('change',()=>{state.options.timing=$('timing').value;render();});
@@ -205,17 +263,17 @@ $('frequency-base').addEventListener('change',()=>{state.options.base=Number($('
 for(const name of['scale','stride','radius','angle','head','seed','slope','increment'])$(name).addEventListener('input',()=>{state.options[name]=Number($(name).value);render();});
 for(const [id,value]of[['view-source','source'],['view-encoded','encoded']])$(id).addEventListener('click',()=>{state.view=value;scene.reset();render();});
 $('color-mode').addEventListener('change',()=>{state.color=$('color-mode').value;renderScene();});
-$('pair-select').append(...Array.from({length:PAIRS},(_,j)=>option(j,`Pair ${j}`)));$('pair-select').addEventListener('change',()=>{state.pair=Number($('pair-select').value);renderFrequency();});
+$('pair-select').append(...Array.from({length:PAIRS},(_,j)=>option(j,`Pair ${j}`)));$('pair-select').addEventListener('change',()=>{state.pair=Number($('pair-select').value);renderFrequency();renderTour();});
 $('rotate-left').addEventListener('click',()=>scene.orbit(-.25,0));$('rotate-right').addEventListener('click',()=>scene.orbit(.25,0));$('zoom-in').addEventListener('click',()=>scene.zoomBy(1.2));$('zoom-out').addEventListener('click',()=>scene.zoomBy(1/1.2));$('reset-view').addEventListener('click',()=>scene.reset());
 $('copy-link').addEventListener('click',async()=>{
-  const params=new URLSearchParams({method:state.method,scene:state.scene,query:String(state.query),key:String(state.key),pair:String(state.pair),color:state.color});
+  const params=new URLSearchParams({method:state.method,step:String(state.step),scene:state.scene,query:String(state.query),key:String(state.key),pair:String(state.pair),color:state.color});
   for(const key of['base','scale','stride','radius','angle','head','seed','slope','increment','timing'])params.set(key,String(state.options[key]));
   const url=location.origin+location.pathname+'#'+params.toString();
   try{await navigator.clipboard.writeText(url);notify('Configuration link copied. The fixed example and encoding settings are preserved.');}catch{notify('Clipboard unavailable. The configuration is now in your address bar; copy it there.');}
   history.replaceState(null,'','#'+params.toString());
 });
 $('export-data').addEventListener('click',()=>{
-  const data={title:'Position Atlas — positional construction',method:state.method,sources:references[state.method].references,example:state.scene,options:state.options,token_a:state.query,token_b:state.key,scope:method().limits,note:'Illustrative position indices and components, not trained embeddings or model outputs.',relative_term:relativeEncoding(positions[state.query],positions[state.key],state.method,state.options),tokens:positions.map((p,i)=>({sequence_index:i,label:p.token.label,modality:p.token.type,position_ids:p.ids,plot_point:p.point,excluded:!!p.excluded,components:encodingComponents(p,state.method,state.options),phases:method().kind==='rotary'&&!p.excluded?Array.from({length:PAIRS},(_,j)=>phase(p,state.method,j,state.options)):[]}))};
+  const data={title:'Position Atlas — positional construction',method:state.method,walkthrough_step:state.step+1,sources:references[state.method].references,example:state.scene,options:state.options,token_a:state.query,token_b:state.key,scope:method().limits,note:'Illustrative position indices and components, not trained embeddings or model outputs.',relative_term:relativeEncoding(positions[state.query],positions[state.key],state.method,state.options),tokens:positions.map((p,i)=>({sequence_index:i,label:p.token.label,modality:p.token.type,position_ids:p.ids,plot_point:p.point,excluded:!!p.excluded,components:encodingComponents(p,state.method,state.options),phases:method().kind==='rotary'&&!p.excluded?Array.from({length:PAIRS},(_,j)=>phase(p,state.method,j,state.options)):[]}))};
   const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download=`position-atlas-${state.method}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);notify('Positional data downloaded.');
 });
 
@@ -223,4 +281,4 @@ $('consent').hidden=!analytics.needsChoice;
 $('privacy-settings').addEventListener('click',()=>{if(analytics.available){$('consent').hidden=false;$('decline-analytics').focus();}else notify('Analytics is inactive: no ID, preview environment, or browser privacy preference.');});
 for(const[id,choice]of[['accept-analytics','accepted'],['decline-analytics','declined']])$(id).addEventListener('click',()=>{analytics.setChoice(choice);$('consent').hidden=true;});
 $('close-consent').addEventListener('click',()=>{$('consent').hidden=true;$('privacy-settings').focus();});
-setControls();listMethods();populateReading();rebuild(!hasLinkedQuery);$('pair-select').value=state.pair;
+setControls();listMethods();populateReading();rebuild(initialParams.has('scene')&&!hasLinkedQuery);$('pair-select').value=state.pair;
