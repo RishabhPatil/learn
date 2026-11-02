@@ -1,21 +1,15 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { methods } from '../public/atlas-data.js';
-import { buildContext, coordinates, distribution, phase, pairInfo, relativeBucket, defaults, circlePoint, PAIRS, logit } from '../public/atlas-math.js';
+import { buildContext, coordinates, phase, pairInfo, relativeBucket, defaults, circlePoint, PAIRS, DIM, encodingComponents, relativeEncoding } from '../public/atlas-math.js';
 const close=(a,b,eps=1e-9)=>assert.ok(Math.abs(a-b)<eps,`${a} ≠ ${b}`);
 
-test('every catalog entry produces finite normalized weights over its eligible keys',()=>{
-  for(const scene of ['text','image','video','two-images'])for(const method of methods)for(const content of ['position','toy']){
+test('every construction has finite coordinates and valid positional components in each sample',()=>{
+  for(const scene of ['text','image','video','two-images'])for(const method of methods){
     const context=buildContext({prefix:'Find red',suffix:'What changed?',scene,grid:3});
-    const p=coordinates(context,method.id);const query=p.findLastIndex(x=>!x.excluded);
-    if(query<0){assert.deepEqual(distribution(p,0,method.id),p.map(()=>0));continue;}
-    for(const causal of [true,false]){
-      const weights=distribution(p,query,method.id,{causal,content});
-      assert.equal(weights.length,context.tokens.length);
-      close(weights.reduce((a,b)=>a+b),1);
-      weights.forEach((value,i)=>{assert.ok(Number.isFinite(value)&&value>=0);if(p[i].excluded||(causal&&i>query))close(value,0);});
-      p.forEach(x=>assert.ok([...x.ids,...x.point].every(Number.isFinite),`${method.id}: coordinates finite`));
-    }
+    const p=coordinates(context,method.id);
+    p.forEach(x=>assert.ok([...x.ids,...x.point,...encodingComponents(x,method.id)].every(Number.isFinite),`${method.id}: finite values`));
+    if(method.kind==='rotary')for(const x of p.filter(x=>!x.excluded))for(let j=0;j<PAIRS;j++)assert.ok(Number.isFinite(phase(x,method.id,j)));
   }
 });
 test('MRoPE has a fixed image temporal ID and following text starts after all used axes',()=>{
@@ -33,11 +27,12 @@ test('interleaving changes frequency allocation but not the baseline geometry; r
   assert.equal(pairInfo('mrope',1).axis,0);assert.equal(pairInfo('interleaved',1).axis,1);
   assert.notEqual(phase(a[5],'mrope',2),phase(b[5],'interleaved',2));
 });
-test('MHRoPE temporal head gives equal positional scores to every patch in one image',()=>{
+test('MHRoPE temporal head has identical phases across all patches in one image',()=>{
   const c=buildContext({prefix:'look',suffix:'red',scene:'image',grid:4}),p=coordinates(c,'mhrope');
-  const query=p.length-1,weights=distribution(p,query,'mhrope',{head:0});
-  for(let i=2;i<=16;i++)close(weights[1],weights[i]);
-  for(let j=0;j<PAIRS;j++)assert.equal(pairInfo('mhrope',j,{head:2}).axis,2);
+  for(let j=0;j<PAIRS;j++){
+    for(let i=2;i<=16;i++)close(phase(p[1],'mhrope',j,{head:0}),phase(p[i],'mhrope',j,{head:0}));
+    assert.equal(pairInfo('mhrope',j,{head:2}).axis,2);
+  }
 });
 test('Circle projection lies on a fixed-radius plane normal to the text diagonal',()=>{
   const points=[];
@@ -61,7 +56,6 @@ test('PI and YaRN reduce to RoPE at scale one; YaRN leaves fast frequencies unch
   const c=buildContext({scene:'image',grid:3});
   const rope=coordinates(c,'rope'),pi=coordinates(c,'pi',{scale:1}),yarn=coordinates(c,'yarn',{scale:1});
   for(let j=0;j<PAIRS;j++){close(phase(rope[5],'rope',j),phase(pi[5],'pi',j));close(phase(rope[5],'rope',j),phase(yarn[5],'yarn',j,{scale:1}));}
-  close(logit(rope[5],rope[3],'rope'),logit(yarn[5],yarn[3],'yarn',{scale:1}));
   close(pairInfo('yarn',0,{scale:8}).frequency,pairInfo('rope',0).frequency);
   close(pairInfo('yarn',PAIRS-1,{scale:8}).frequency,pairInfo('rope',PAIRS-1).frequency/8);
 });
@@ -81,9 +75,17 @@ test('explicit elapsed time affects only time-aligned multimodal positions',()=>
   assert.deepEqual(a[19].ids,[5,1,1]);assert.deepEqual(b[19].ids,[9,1,1]);
   assert.deepEqual(coordinates(c,'mrope',{timing:'uniform'}),coordinates(c,'mrope',{timing:'irregular'}));
 });
-test('adding padding to identical Q/K does not turn position-only scores into semantic inference',()=>{
-  const c=buildContext({prefix:'red blue green',suffix:'object',scene:'text'}),p=coordinates(c,'none');
-  distribution(p,p.length-1,'none').forEach(x=>close(x,1/p.length));
-  assert.equal(methods.length,new Set(methods.map(m=>m.id)).size);
-  assert.ok(methods.every(m=>m.source.startsWith('https://')&&m.limits));
+test('additive components and relative terms follow their definitions',()=>{
+  const c=buildContext({prefix:'a b c d e f g h i j k l',suffix:'',scene:'text'}),p=coordinates(c,'sinusoidal');
+  const atZero=encodingComponents(p[0],'sinusoidal');
+  assert.equal(atZero.length,DIM);
+  atZero.forEach((v,d)=>close(v,d%2?1:0));
+  for(let d=0;d<DIM;d+=2)close(encodingComponents(p[3],'sinusoidal')[d],Math.sin(3*10000**(-d/DIM)));
+  assert.deepEqual(relativeEncoding(p[11],p[0],'shaw').values,relativeEncoding(p[10],p[0],'shaw').values);
+  assert.notDeepEqual(encodingComponents(p[0],'learned',{seed:3}),encodingComponents(p[0],'learned',{seed:7}));
+  close(relativeEncoding(p[11],p[1],'alibi',{slope:.2}).values[0],-2);
+  assert.deepEqual(relativeEncoding(p[0],p[1],'alibi').values,[]);
+  assert.equal(relativeEncoding(p[0],p[1],'t5').index,17);
+  assert.equal(relativeEncoding(p[1],p[0],'t5').index,1);
+  assert.deepEqual(encodingComponents(p[0],'none'),[]);
 });

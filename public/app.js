@@ -1,4 +1,4 @@
-import { sinusoidal, rotate, dot, alibiBias, softmax } from './math.js';
+import { sinusoidal, rotate, dot, alibiBias } from './math.js';
 import { analyticsId } from './config.js';
 import { createAnalytics } from './analytics.js';
 
@@ -94,23 +94,25 @@ function drawAlibi() {
   const svg = $('bias'); svg.replaceChildren();
   const slope = Number($('slope').value);
   $('slope-value').textContent = slope.toFixed(2);
-  const probabilities = softmax(Array.from({ length: 16 }, (_, j) => alibiBias(15, j, slope)));
-  const max = Math.max(.1, Math.ceil(Math.max(...probabilities) * 10) / 10);
-  const x0 = 58, y0 = 365, plotH = 300, w = 35;
+  const biases = Array.from({ length: 16 }, (_, j) => alibiBias(15, j, slope));
+  const max = Math.max(1, 15 * slope);
+  const x0 = 58, y0 = 65, plotH = 300, w = 35;
   for (let i = 0; i <= 4; i++) {
-    const y = y0 - i * plotH / 4;
+    const y = y0 + i * plotH / 4;
     line(svg, x0, y, x0 + 16 * w, y);
-    label(svg, x0 - 10, y + 4, `${Math.round(max * i / 4 * 100)}%`, { 'text-anchor': 'end', 'font-size': 10 });
+    label(svg, x0 - 10, y + 4, (-max * i / 4).toFixed(2), { 'text-anchor': 'end', 'font-size': 10 });
   }
-  probabilities.forEach((p, j) => {
-    const height = p / max * plotH;
-    const rect = svgEl('rect', { x: x0 + j * w + 4, y: y0 - height, width: w - 8, height, fill: j === 15 ? orange : green, rx: 2 });
-    rect.append(svgEl('title', {}, `Key ${j}: ${(p * 100).toFixed(2)}%, bias ${alibiBias(15, j, slope).toFixed(2)}`)); svg.append(rect);
-    label(svg, x0 + j * w + w / 2, y0 + 23, String(j), { 'text-anchor': 'middle', 'font-size': 10 });
+  biases.forEach((bias, j) => {
+    const height = -bias / max * plotH;
+    const rect = svgEl('rect', { x: x0 + j * w + 4, y: y0, width: w - 8, height, fill: green, rx: 2 });
+    rect.append(svgEl('title', {}, `Position ${j}: bias ${bias.toFixed(2)}`)); svg.append(rect);
+    svg.append(svgEl('circle', { cx:x0+j*w+w/2, cy:y0+height, r:2.5, fill:j===15?orange:green }));
+    label(svg, x0 + j * w + w / 2, 390, String(j), { 'text-anchor': 'middle', 'font-size': 10 });
   });
-  label(svg, x0, 30, 'ATTENTION PROBABILITY', { 'font-size': 10 });
-  label(svg, 340, 425, 'KEY POSITION →', { 'text-anchor': 'middle', 'font-size': 10 });
-  $('alibi-result').textContent = `Slope ${slope.toFixed(2)} · key 0: ${(probabilities[0] * 100).toFixed(2)}% · key 15 (self): ${(probabilities[15] * 100).toFixed(2)}%`;
+  label(svg, x0, 30, 'POSITIONAL BIAS', { 'font-size': 10 });
+  label(svg, 340, 425, 'POSITION j →', { 'text-anchor': 'middle', 'font-size': 10 });
+  $('alibi-result').textContent = `Slope ${slope.toFixed(2)} · bias at j = 0: ${biases[0].toFixed(2)} · bias at j = 15: 0`;
+
 }
 
 const equations = {

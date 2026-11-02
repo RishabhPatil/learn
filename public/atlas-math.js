@@ -1,28 +1,18 @@
-import { softmax } from './math.js';
-
 export const PAIRS = 24;
 export const DIM = PAIRS * 2;
 export const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
-export const defaults = { base:10000, scale:4, stride:2, radius:3, angle:30, head:0, seed:3, slope:.12, increment:.25, temperature:1, content:'position', causal:true, timing:'uniform' };
+export const defaults = { base:10000, scale:4, stride:2, radius:3, angle:30, head:0, seed:3, slope:.12, increment:.25, timing:'uniform' };
 const visualOnly = new Set(['axial','mixed']);
 const lineMethods = new Set(['none','sinusoidal','learned','shaw','t5','alibi','rope','pi','yarn','v2pe']);
-export function wordFeature(word) {
-  const w = word.toLowerCase().replace(/[^a-z]/g,'');
-  if (['red','ball','circle'].includes(w)) return [1,.08,.03];
-  if (['blue','square'].includes(w)) return [.03,.15,1];
-  if (['green','ground'].includes(w)) return [.1,1,.1];
-  return [.4,.4,.4];
-}
-export function buildContext({prefix='Find the red object',suffix='Where is it now?',scene='image',grid=4,sample}) {
+export function buildContext({prefix='Find the red object',suffix='Where is it now?',scene='image',grid=4}) {
   const tokens=[], groups=[];
   function text(str) {
-    for (const word of str.trim().split(/\s+/).filter(Boolean).slice(0,24)) tokens.push({id:tokens.length,type:'text',label:word,feature:wordFeature(word),group:-1});
+    for (const word of str.trim().split(/\s+/).filter(Boolean).slice(0,24)) tokens.push({id:tokens.length,type:'text',label:word,group:-1});
   }
   function visual(frames) {
     const group=groups.length; const start=tokens.length;
     for(let f=0;f<frames;f++) for(let h=0;h<grid;h++) for(let w=0;w<grid;w++) {
-      const feature=sample ? sample(f,h,w,grid,group) : [.5,.5,.5];
-      tokens.push({id:tokens.length,type:frames>1?'video':'image',label:`${frames>1?'F'+f:'I'+group}[${h},${w}]`,f,h,w,H:grid,W:grid,F:frames,group,feature});
+      tokens.push({id:tokens.length,type:frames>1?'video':'image',label:`${frames>1?'F'+f:'I'+group}[${h},${w}]`,f,h,w,H:grid,W:grid,F:frames,group});
     }
     groups.push({id:group,start,end:tokens.length,frames,H:grid,W:grid});
   }
@@ -127,45 +117,30 @@ export function relativeBucket(relative,bidirectional=true,buckets=32,maxDistanc
   const exact=buckets/2;
   return bucket+(n<exact?n:Math.min(buckets-1,exact+Math.floor(Math.log(n/exact)/Math.log(maxDistance/exact)*(buckets-exact))));
 }
+// Reproducible example values; these are not trained model parameters.
 function weight(index,dimension,seed) { return Math.sin((index+17)*127.1+(dimension+3)*311.7+seed*79.3); }
-function contentPair(token,j,mode) {
-  if(mode==='position') return [1,0];
-  return [1+1.4*token.feature[j%3],.7*token.feature[(j+1)%3]];
-}
-export function logit(q,k,method,options={}) {
+export function encodingComponents(position,method,options={}) {
   const o={...defaults,...options};
-  if(q.excluded||k.excluded||(o.causal&&k.token.id>q.token.id)) return -Infinity;
-  let sum=0;
-  const additive=method==='sinusoidal'||method==='learned';
-  for(let j=0;j<PAIRS;j++) {
-    let [qx,qy]=contentPair(q.token,j,o.content),[kx,ky]=contentPair(k.token,j,o.content);
-    if(additive) {
-      if(o.content==='position') qx=qy=kx=ky=0;
-      if(method==='sinusoidal') {
-        const qa=q.ids[0]*o.base**(-j/PAIRS),ka=k.ids[0]*o.base**(-j/PAIRS);
-        qx+=Math.sin(qa); qy+=Math.cos(qa); kx+=Math.sin(ka);ky+=Math.cos(ka);
-      } else {
-        qx+=weight(q.token.id,j*2,o.seed);qy+=weight(q.token.id,j*2+1,o.seed);
-        kx+=weight(k.token.id,j*2,o.seed);ky+=weight(k.token.id,j*2+1,o.seed);
-      }
-      sum+=qx*kx+qy*ky;
-    } else if(['none','alibi','t5','shaw'].includes(method)) {
-      sum+=qx*kx+qy*ky;
-      if(method==='shaw') {const r=clamp(k.token.id-q.token.id,-8,8);sum+=qx*weight(r,j*2,o.seed)+qy*weight(r,j*2+1,o.seed);}
-    } else {
-      const delta=phase(k,method,j,o)-phase(q,method,j,o);
-      sum+=(qx*kx+qy*ky)*Math.cos(delta)+(qy*kx-qx*ky)*Math.sin(delta);
-    }
-  }
-  let score=sum/Math.sqrt(DIM);
-  if(method==='alibi') score-=o.slope*Math.abs(k.token.id-q.token.id);
-  if(method==='t5') score+=weight(relativeBucket(k.token.id-q.token.id,!o.causal),0,o.seed);
-  if(method==='yarn') score*=Math.max(1,1+.1*Math.log(o.scale))**2;
-  return score/o.temperature;
+  if(method==='sinusoidal') return Array.from({length:DIM},(_,d)=>{
+    const angle=position.ids[0]*o.base**(-Math.floor(d/2)/PAIRS);
+    return d%2?Math.cos(angle):Math.sin(angle);
+  });
+  if(method==='learned') return Array.from({length:DIM},(_,d)=>weight(position.token.id,d,o.seed));
+  return [];
 }
-export function distribution(positions,query,method,options={}) {
-  const logits=positions.map(k=>logit(positions[query],k,method,options));
-  return logits.every(x=>x===-Infinity)?logits.map(()=>0):softmax(logits);
+export function relativeEncoding(a,b,method,options={}) {
+  const o={...defaults,...options},offset=b.token.id-a.token.id;
+  if(method==='shaw') {
+    const index=clamp(offset,-8,8);
+    return {offset,index,values:Array.from({length:DIM},(_,d)=>weight(index,d,o.seed))};
+  }
+  if(method==='t5') {
+    const index=relativeBucket(offset,true);
+    return {offset,index,values:[weight(index,0,o.seed)]};
+  }
+  // Original causal ALiBi is defined here only for B at or before A.
+  if(method==='alibi')return {offset,index:offset,values:offset<=0?[o.slope*offset]:[]};
+  return {offset,index:offset,values:[]};
 }
 export function axesFor(method) {
   if(lineMethods.has(method)) return ['position p','display only','display only'];
