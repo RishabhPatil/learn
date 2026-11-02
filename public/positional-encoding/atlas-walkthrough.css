@@ -1,97 +1,112 @@
-/* Two synchronized panes: narrative on the left, positional construction on the right. */
-.atlas-body main,.atlas-body .site-header,.atlas-body footer{max-width:1800px;width:calc(100% - 56px)}
-.atlas-body .site-header{height:64px;min-height:0;padding-top:12px;padding-bottom:12px}
-.walkthrough-intro{display:flex;justify-content:space-between;gap:25px;align-items:center;padding:22px 0 18px}
-.walkthrough-intro .eyebrow{font-size:9px;margin:0 0 7px}
-.walkthrough-intro h1{font-size:30px;letter-spacing:-.8px;line-height:1.2;margin:0}
-.walkthrough-intro>p{font-size:11px;line-height:1.8;color:var(--muted);margin:0}
-.method-picker{display:flex;align-items:center;gap:15px;padding:12px 0;border-top:1px solid var(--line)}
-.method-picker label{font:10px var(--mono);color:var(--muted)}
-.method-picker select{padding:9px 12px;border:1px solid var(--line);border-radius:4px;background:var(--white);font-size:13px;min-width:240px;width:330px;max-width:42vw;margin-top:0;flex:0 1 330px;color:var(--ink)}
-.method-picker button{border:0;background:none;color:var(--green);font-size:11px;cursor:pointer;padding:9px}
-#explore-freely{margin-left:auto}
-.method-catalog{border:1px solid var(--line);padding:16px;background:var(--white);margin-bottom:12px}
-.method-catalog .method-sidebar{position:static;max-height:280px;overflow:auto;padding:0;display:block}
-.method-catalog input,.method-catalog select{width:calc(50% - 8px);display:inline-block;margin:0 8px 10px 0}
-.method-catalog #method-list{display:flex;gap:6px;flex-wrap:wrap;max-height:none;overflow:visible}
-.method-catalog .family-label{display:none}.method-catalog .method-button{width:auto;border:1px solid var(--line);border-radius:3px}
-.walkthrough-layout{display:grid;grid-template-columns:minmax(310px,36%) minmax(0,1fr);height:calc(100dvh - 225px);min-height:480px;max-height:1000px;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--white)}
-.lesson-pane{display:flex;flex-direction:column;min-width:0;min-height:0;border-right:1px solid var(--line);background:#faf9f4}
-.lesson-scroll{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;padding:24px 26px;flex:1;min-height:0}
-.method-heading{display:block;padding:0 0 22px}
-.method-heading h2{font-size:29px;line-height:1.2;margin:0 0 10px}
-.method-heading .eyebrow{font-size:9px;margin:0 0 10px}
-.method-heading p:not(.eyebrow){font-size:13px;line-height:1.7}
-.method-heading>a{font:10px var(--mono);display:inline-block;padding-top:12px;color:var(--green)}
-.tour-progress{border-top:1px solid var(--line);padding-top:15px;display:flex;justify-content:space-between;align-items:center;font:10px var(--mono);color:var(--muted)}
-.tour-progress button{border:0;background:none;font:10px var(--mono);color:var(--green);cursor:pointer}
-#tour-outline{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;margin:16px 0 24px}
-.tour-dot{border:0;background:none;padding:0;cursor:pointer;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:7px;position:relative}
-.tour-dot:before{content:'';position:absolute;left:0;right:0;top:13px;height:1px;background:var(--line)}
-.tour-dot span{position:relative;z-index:1;border:1px solid var(--line);background:#faf9f4;width:27px;height:27px;display:grid;place-items:center;border-radius:50%;font:10px var(--mono)}
-.tour-dot small{font-size:9px;white-space:nowrap}
-.tour-dot[aria-current=step]{color:var(--green);font-weight:bold}.tour-dot[aria-current=step] span{background:var(--green);color:white;border-color:var(--green)}
-.tour-lesson>.eyebrow{font-size:9px;margin:0 0 10px;color:var(--green)}
-.tour-lesson h3{font-size:27px;line-height:1.25;letter-spacing:-.4px;margin:0 0 15px}
-.tour-lesson h3:focus-visible{outline:2px solid var(--green);outline-offset:5px}
-#tour-body{font-size:14px;line-height:1.9;margin:0 0 18px}
-.tour-lesson .reference-equations{margin:18px 0;padding:12px 14px}.tour-lesson .reference-equations code{font-size:11px}
-.tour-observation{border-left:2px solid var(--orange);padding:2px 0 2px 14px;margin:20px 0}
-.tour-observation>span{font:8px var(--mono);letter-spacing:1px;color:var(--muted)}
-.tour-observation p{font-size:12px;line-height:1.85;margin:8px 0 0}
-.tour-hint{font-size:11px;line-height:1.8;color:var(--muted);margin:0 0 24px}
-.full-reference{border-top:1px solid var(--line);padding-top:15px}.full-reference>summary{font-size:11px;cursor:pointer;color:var(--green)}
-.full-reference .method-reference{border:0;font-size:12px;padding:16px 0 0}.full-reference .reference-equations code{font-size:10px}.full-reference .reference-notation{font-size:10px}
-.tour-navigation{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:15px 20px;border-top:1px solid var(--line);background:#f1f3ea;flex-shrink:0}
-.tour-navigation button{font-size:12px;padding:11px 15px;min-width:105px}.tour-navigation button:disabled{opacity:.4;cursor:default}
-.tour-navigation>span{font:10px var(--mono);color:var(--muted)}
-.visual-pane{min-height:0;min-width:0;display:flex;flex-direction:column;background:#f4f5ee}
-.visual-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:15px 20px;border-bottom:1px solid var(--line);font:9px var(--mono);letter-spacing:.6px;color:var(--green);flex-shrink:0}
-.visual-type{font-size:8px;color:var(--muted);text-align:right}
-.visual-scroll{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;padding:0 20px 24px;flex:1;min-height:0}
-.visual-scroll .example-heading{border:0;padding-top:16px}.visual-scroll .example-heading .eyebrow{display:none}.visual-scroll .example-heading p{font-size:10px}
-.visual-scroll .example-heading label{min-width:165px}
-.visual-scroll .scene-toolbar{padding-top:13px;flex-wrap:wrap;gap:10px}.visual-scroll .camera-actions{margin-left:auto;width:auto}
-.visual-scroll #space{height:clamp(240px,37dvh,410px)}
-.visual-scroll .stage-caption{font-size:8px;padding:15px;flex-wrap:wrap;gap:8px}.visual-scroll .stage-bottom{font-size:8px;padding:0 15px 12px;flex-wrap:wrap;gap:6px}.visual-scroll .stage-bottom>span{text-align:left}
-.visual-scroll .geometry-explanation{font-size:11px;line-height:1.7}
-.visual-scroll .lab-selectors{padding:14px 0;gap:12px}.visual-scroll .parameter-controls{padding:12px 0 18px;gap:16px}
-.visual-scroll .inspector{padding:16px}.visual-scroll .inspection-grid{gap:18px}.visual-scroll .inspector-row{font-size:10px}.visual-scroll .patch-detail{gap:12px}.visual-scroll .patch-detail canvas{width:62px;height:62px}
-.visual-scroll .frequency-panel,.visual-scroll .components-panel{margin-top:18px;padding:20px}
-.visual-scroll .frequency-detail{gap:10px;flex-wrap:wrap}.visual-scroll .frequency-detail svg{width:190px;height:150px;min-width:120px}.visual-scroll .frequency-detail p{font-size:11px;flex:1;min-width:180px}
-.visual-scroll #frequency-strip{grid-template-columns:repeat(12,1fr);gap:5px}
-.visual-scroll .frequency-pair{font-size:10px;padding:8px 0}.visual-scroll .frequency-pair small{font-size:8px}
-.walkthrough-layout[data-step="0"] #encoding-view,.walkthrough-layout[data-step="1"] #encoding-view{display:none}
-.walkthrough-layout[data-step="2"] #space{height:245px}
-.walkthrough-layout:not([data-step="4"]) .example-heading label,.walkthrough-layout:not([data-step="4"]) .segmented,.walkthrough-layout:not([data-step="4"]) .scene-toolbar>label{display:none}
-.walkthrough-layout:not([data-step="4"]) .method-explanation,.walkthrough-layout:not([data-step="4"]) .coordinate-details{display:none}
-.walkthrough-layout[data-step="0"] .lab-selectors,.walkthrough-layout[data-step="0"] .parameter-controls,.walkthrough-layout[data-step="1"] .parameter-controls{display:none}
-.walkthrough-layout[data-step="0"] #token-inspector{display:none}
-.walkthrough-layout[data-step="0"] .inspector>.eyebrow{display:none}.walkthrough-layout[data-step="0"] .inspection-grid{grid-template-columns:1fr}
-.walkthrough-layout[data-step="2"] .frequency-panel{margin-top:15px}.walkthrough-layout[data-step="2"] .frequency-detail svg{width:220px;height:180px}
-.walkthrough-layout[data-step="3"] #space{height:245px}
-.walkthrough-layout[data-step="0"] .atlas-actions,.walkthrough-layout[data-step="1"] .atlas-actions,.walkthrough-layout[data-step="2"] .atlas-actions,.walkthrough-layout[data-step="3"] .atlas-actions{margin-top:18px}
-.walkthrough-layout:not([data-step="4"]) #export-data,.walkthrough-layout:not([data-step="4"]) .atlas-actions p{display:none}
-.atlas-reading{margin-top:32px;padding:35px 0}.atlas-reading h2{font-size:32px}
-@media(min-width:1500px){.walkthrough-layout{grid-template-columns:480px minmax(0,1fr)}.visual-scroll #frequency-strip{grid-template-columns:repeat(24,1fr)}}
-@media(max-width:1050px) and (min-width:761px){.atlas-body main,.atlas-body .site-header,.atlas-body footer{width:calc(100% - 32px)}.walkthrough-layout{grid-template-columns:minmax(280px,40%) minmax(0,1fr)}.lesson-scroll{padding:20px}.visual-scroll{padding:0 14px 20px}.walkthrough-intro>p{display:none}.visual-type{display:none}.tour-navigation{padding:12px}.tour-navigation button{min-width:90px;padding:10px}.visual-scroll .inspection-grid{grid-template-columns:1fr}}
-@media(max-width:760px){
- .atlas-body main,.atlas-body .site-header,.atlas-body footer{width:calc(100% - 28px)}.atlas-body .site-header{padding:12px 0}.atlas-body .edition{display:none}.walkthrough-intro{padding:16px 0}.walkthrough-intro h1{font-size:25px}.walkthrough-intro>p{display:none}
- .method-picker{gap:8px;flex-wrap:wrap}.method-picker label{width:100%;font-size:9px}.method-picker select{min-width:0;flex:1;max-width:100%;font-size:12px}.method-picker button{font-size:10px;padding:6px}#browse-methods{display:none}#explore-freely{margin-left:0}
- .walkthrough-layout{display:flex;flex-direction:column;height:auto;max-height:none;min-height:0;overflow:visible}.lesson-pane{border-right:0;border-bottom:1px solid var(--line)}.lesson-scroll{max-height:48dvh;padding:18px 20px}.method-heading{padding-bottom:14px}.method-heading h2{font-size:25px}.method-heading p:not(.eyebrow){font-size:12px}.method-heading>a{font-size:10px}.tour-progress{padding-top:12px}#tour-outline{margin:12px 0 18px}.tour-lesson h3{font-size:23px}#tour-body{font-size:13px;line-height:1.8}
- .tour-navigation{padding:10px 16px}.tour-navigation button{font-size:11px;padding:10px 12px;min-width:95px}.visual-pane{min-height:400px}.visual-heading{padding:12px 14px;font-size:8px}.visual-type{font-size:7px}.visual-scroll{overflow:visible;padding:0 14px 18px}.visual-scroll #space{height:300px}.visual-scroll .frequency-detail svg{width:140px;min-width:100px}.visual-scroll .frequency-detail p{min-width:160px;font-size:10px}.visual-scroll .frequency-panel,.visual-scroll .components-panel{padding:16px}.visual-scroll .frequency-header{display:block}.visual-scroll .frequency-header label{display:flex;gap:10px;align-items:center;margin-bottom:12px}.visual-scroll .frequency-header select{width:100px;margin:0}.visual-scroll .inspection-grid{grid-template-columns:1fr}.visual-scroll .stage-caption{flex-direction:column}
- .visual-scroll .example-heading{display:block}.visual-scroll .example-heading label{margin-top:10px;max-width:220px}.visual-scroll .lab-selectors{grid-template-columns:1fr 1fr}.tour-observation p{font-size:11px}.tour-hint{font-size:10px}.visual-scroll .scene-toolbar{justify-content:flex-end}
+/* A full-height reading pane and a single, unobstructed visualization. */
+.atlas-body{height:100dvh;overflow:hidden;background:#fafbf8}
+.atlas-body [hidden]{display:none!important}
+.atlas-body .site-header{max-width:none;width:100%;height:52px;min-height:0;margin:0;padding:0 24px;display:flex;gap:20px;border-bottom:1px solid var(--line);background:#f3f5ef}
+.home-link{font-size:13px;color:var(--muted)}
+.atlas-title{font:600 15px var(--sans, sans-serif);letter-spacing:-.2px}
+.site-header>button{margin-left:auto}
+.atlas-body button{cursor:pointer}
+.site-header button,.text-button,.lesson-tools button,.visual-heading button{border:0;background:none;color:var(--green);font-size:12px;font-family:inherit;padding:8px 10px;min-height:36px}
+.atlas-body main{width:100%;max-width:none;height:calc(100dvh - 52px);margin:0}
+.walkthrough-layout{display:grid;grid-template-columns:360px minmax(0,1fr);height:100%;min-height:0;overflow:hidden}
+.lesson-pane{min-width:0;min-height:0;display:flex;flex-direction:column;border-right:1px solid var(--line);background:#fffef9}
+.method-picker{padding:20px 24px 0}
+.atlas-body label{font-size:12px;color:var(--muted);display:block}
+.atlas-body select{font-size:13px;font-family:inherit;color:var(--ink);border:1px solid var(--line);border-radius:4px;background:#fffefb;min-height:40px;padding:8px 10px;max-width:100%}
+.method-picker select{width:100%}
+.lesson-scroll{padding:22px 26px;overflow-y:auto;min-height:0;flex:1;scrollbar-width:thin;overscroll-behavior:contain}
+.method-heading{display:block;padding:0 0 26px}
+.method-heading h1{font-size:28px;line-height:1.2;letter-spacing:-.6px;margin:0 0 12px}
+.method-heading #method-summary{font-size:13px;line-height:1.7;max-width:none;margin:0;color:var(--muted)}
+.method-heading .text-button{font-size:12px;padding:7px 0;margin-top:7px;text-decoration:underline;text-underline-offset:3px}
+.tour-lesson{border-top:1px solid var(--line);padding-top:26px}
+.tour-lesson .eyebrow{font:10px var(--mono);letter-spacing:1px;margin:0 0 12px;color:var(--muted)}
+#tour-title{font-size:26px;line-height:1.25;letter-spacing:-.5px;margin:0 0 18px}
+#tour-body{font-size:15px;line-height:1.85;margin:0}
+.tour-observation{font:12px/1.8 var(--mono);color:var(--muted);border-left:2px solid #c7d1bf;padding-left:14px;margin:24px 0 0}
+.lesson-tools{display:flex;gap:12px;margin-top:25px}
+.lesson-tools button{padding:6px 0;font-size:12px;color:var(--muted)}
+.tour-navigation{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0;padding:18px 24px;border-top:1px solid var(--line)}
+.tour-navigation button{font-size:12px;min-height:42px;padding:10px 16px;border-radius:4px}
+.tour-navigation>span{font:11px var(--mono);color:var(--muted);white-space:nowrap}
+.tour-navigation button:disabled{opacity:.35;cursor:default}
+.visual-pane{min-width:0;min-height:0;display:flex;flex-direction:column;background:#fafbf8}
+.visual-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 24px;flex-shrink:0}
+.visual-jumps{display:flex;gap:3px}
+.visual-heading button{font-size:12px;border-radius:4px;color:var(--muted)}
+.visual-jumps button[aria-pressed=true]{background:#e8ede2;color:var(--ink)}
+.visual-heading #open-settings{color:var(--green)}
+.visual-scroll{min-height:0;flex:1;overflow:auto;position:relative}
+.geometry-view{height:100%;min-height:240px;display:flex;flex-direction:column}
+.space-stage{border:0;border-radius:0;background:transparent;flex:1;min-height:0;overflow:hidden;color:var(--ink);display:flex;flex-direction:column}
+.stage-caption{position:absolute;top:8px;left:0;z-index:1;padding:0 28px;color:var(--muted);font:10px var(--mono);letter-spacing:.5px;pointer-events:none}
+#space{height:100%;min-height:0;flex:1;width:100%;display:block;touch-action:none}
+.scene-tools{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 24px;flex-shrink:0}
+#space-hint{font-size:11px;color:var(--muted)}
+.camera-actions{display:flex;gap:5px;flex-shrink:0;margin:0;width:auto}
+.camera-actions button{font-size:12px;min-height:36px;min-width:36px;background:#fffefb;border:1px solid var(--line);color:var(--muted)}
+.geometry-caption{margin:0;padding:0 24px 18px;color:var(--muted);font:10px var(--mono)}
+#encoding-view{min-height:100%;padding:20px 40px;display:flex;flex-direction:column;justify-content:center}
+.frequency-panel,.components-panel{background:transparent;border:0;margin:0;padding:0;border-radius:0}
+.frequency-header{display:flex;align-items:flex-start;gap:25px;justify-content:space-between}
+.frequency-header label{min-width:130px;display:flex;align-items:center;gap:10px}
+.frequency-header select{margin:0!important;width:100px!important}
+.pair-allocation{position:relative;max-width:440px;font-size:12px;text-align:right}
+.pair-allocation summary{cursor:pointer;padding:8px 0;min-height:40px;color:var(--green)}
+.pair-allocation[open]{background:#fffef9;border:1px solid var(--line);padding:0 14px 14px;border-radius:4px}
+#frequency-description{font-size:12px;text-align:left;margin:10px 0}
+#frequency-strip{grid-template-columns:repeat(12,1fr);gap:4px}
+#frequency-footnote{font-size:11px;text-align:left;line-height:1.6;margin-top:14px}
+.frequency-detail{display:flex;flex-direction:column;gap:0;margin:22px 0}
+.frequency-detail svg{width:min(100%,420px);height:auto;min-width:0;max-height:46dvh}
+.frequency-detail p{font:13px/1.9 var(--mono);white-space:pre-line;margin:0;text-align:center}
+.components-panel>.eyebrow{font-size:11px}
+.components-panel>.micro{font-size:13px;max-width:65ch}
+.components-panel .component-readout{font:13px/1.8 var(--mono);margin-top:24px}
+.components-panel svg{margin:30px 0;width:100%;height:auto}
+.components-panel details{font-size:12px;margin-top:20px;max-height:200px;overflow:auto}
+.atlas-body dialog{border:1px solid var(--line);border-radius:8px;padding:28px;max-width:760px;width:calc(100% - 40px);max-height:85dvh;overflow:auto;color:var(--ink);background:#fffef9;box-shadow:0 20px 80px #172b2726}
+.atlas-body dialog::backdrop{background:#19312844;backdrop-filter:blur(3px)}
+.dialog-heading{display:flex;align-items:center;gap:20px;justify-content:space-between;margin-bottom:18px}
+.dialog-heading h2{font-size:25px;line-height:1.25;margin:0;letter-spacing:-.4px}
+.dialog-heading button{border:1px solid var(--line);border-radius:4px;background:#fffef9;min-width:40px;min-height:40px;font-size:23px;color:var(--muted)}
+#method-source{font-size:12px}
+.method-reference{margin-top:16px;padding-bottom:0}
+.atlas-body dialog label select{display:block;width:100%;margin-top:6px}
+.atlas-body dialog .scene-toolbar{padding:20px 0 0;flex-wrap:wrap}
+.atlas-body dialog .scene-toolbar label select{width:auto;margin:0}
+.atlas-body dialog .inspection-grid{grid-template-columns:1fr 1fr}
+.atlas-body dialog .inspector{padding:18px}
+.atlas-body dialog .atlas-actions{padding-bottom:0;margin-top:18px}
+.atlas-body dialog .atlas-reading{padding:0;margin:0;border:0}
+.atlas-reading>.eyebrow,.atlas-reading>h2{display:none}
+.atlas-reading>p:not(.eyebrow){font-size:13px}
+.reading-index{grid-template-columns:repeat(2,1fr);margin-top:20px}
+#further-reading{grid-template-columns:repeat(2,1fr)}
+.atlas-body dialog footer{max-width:none;width:100%;margin:28px 0 0;padding:18px 0 0;display:block;font-size:11px}
+.atlas-body dialog footer>span{display:block;margin-bottom:14px}
+.atlas-body dialog footer div{display:flex;gap:16px;flex-wrap:wrap}
+.atlas-body :focus-visible{outline:2px solid #507753;outline-offset:3px}
+@media(min-width:1500px){.walkthrough-layout{grid-template-columns:410px minmax(0,1fr)}.lesson-scroll{padding:28px 34px}.method-picker{padding:24px 32px 0}}
+@media(max-width:900px) and (min-width:701px){.walkthrough-layout{grid-template-columns:310px minmax(0,1fr)}.lesson-scroll{padding:20px}.method-picker{padding:16px 20px 0}.tour-navigation{padding:14px}.visual-heading{padding:10px 12px}.scene-tools{padding:10px 12px;flex-wrap:wrap}#encoding-view{padding:16px}.frequency-header{flex-wrap:wrap;gap:10px}}
+@media(max-width:700px){
+ .atlas-body .site-header{height:44px;padding:0 14px;gap:14px}.atlas-title{font-size:14px}.site-header>button{font-size:11px;padding-right:0}
+ .atlas-body main{height:calc(100dvh - 44px)}
+ .walkthrough-layout{display:grid;grid-template-columns:1fr;grid-template-rows:48px minmax(200px,43%) minmax(0,1fr)}
+ .lesson-pane{display:contents}.method-picker{grid-row:1;padding:4px 12px;border-bottom:1px solid var(--line);background:#fffef9}
+ .method-picker select{min-height:36px;font-size:12px;padding:6px 9px;width:100%;margin:0}
+ .visual-pane{grid-row:2;border-bottom:1px solid var(--line)}
+ .lesson-scroll{grid-row:3;padding:18px 20px 80px;background:#fffef9;overflow-y:auto}
+ .tour-navigation{position:fixed;bottom:0;left:0;right:0;background:#fffef9;z-index:2;padding:8px 16px;padding-bottom:max(8px,env(safe-area-inset-bottom));border-top:1px solid var(--line)}
+ .tour-navigation button{min-height:40px;padding:8px 18px}
+ .method-heading{padding-bottom:18px}.method-heading h1{font-size:22px;margin-bottom:8px}.method-heading #method-summary{font-size:12px;line-height:1.65}
+ .method-heading .text-button{margin-top:2px;min-height:32px}.tour-lesson{padding-top:18px}#tour-title{font-size:23px;margin-bottom:12px}#tour-body{font-size:14px;line-height:1.8}.tour-observation{font-size:11px;margin-top:18px}.lesson-tools{margin-top:18px}
+ .visual-heading{padding:5px 10px;gap:5px}.visual-heading button{font-size:11px;padding:5px 8px;min-height:32px}
+ .geometry-view{min-height:0}.stage-caption{padding:0 16px;top:3px;font-size:8px}.scene-tools{padding:4px 12px;gap:4px}#space-hint{font-size:9px;max-width:160px}.camera-actions button{min-height:32px;min-width:32px;font-size:11px;padding:4px 6px}.geometry-caption{font-size:8px;padding:2px 12px 8px}
+ #encoding-view{padding:8px 16px;justify-content:flex-start}.frequency-header{align-items:flex-start;gap:10px}.frequency-header label{font-size:11px;gap:6px;min-width:0}.frequency-header select{min-height:32px;padding:4px;width:77px!important;font-size:11px}.pair-allocation{font-size:11px;max-width:50%}.pair-allocation summary{min-height:32px;padding:6px 0}.pair-allocation[open]{max-width:100%}#frequency-strip{grid-template-columns:repeat(8,1fr)}
+ .frequency-detail{flex-direction:row;flex-wrap:nowrap;margin:5px 0;gap:8px;align-items:center}.frequency-detail svg{width:44%;min-width:90px;height:auto;max-height:170px}.frequency-detail p{font-size:10px;text-align:left;line-height:1.8;flex:1}
+ .components-panel>.eyebrow{font-size:9px;margin-bottom:6px}.components-panel>.micro{font-size:11px;margin:0}.components-panel svg{margin:4px 0;max-height:120px}.components-panel .component-readout{font-size:10px;margin-top:4px}.components-panel details{margin-top:8px}
+ .atlas-body dialog{padding:20px;max-height:88dvh;width:calc(100% - 24px)}.dialog-heading h2{font-size:22px}.atlas-body dialog .inspection-grid{grid-template-columns:1fr}.reading-index,#further-reading{grid-template-columns:1fr}
 }
-@media(prefers-reduced-motion:no-preference){.tour-lesson{animation:lesson-in .2s ease-out}@keyframes lesson-in{from{opacity:.5;transform:translateY(3px)}to{opacity:1;transform:none}}}
-@media print{.walkthrough-intro,.method-picker,.tour-progress,#tour-outline,.tour-navigation,.visual-heading{display:none}.walkthrough-layout{display:block;height:auto;max-height:none;border:0}.lesson-scroll,.visual-scroll{overflow:visible;max-height:none}.lesson-pane{border:0}.full-reference{display:block}.visual-pane{display:block}.geometry-view,#encoding-view{display:block!important}}
-
-/* Keep the explorer discoverable on short screens and on the encoding step. */
-.walkthrough-layout{overflow-anchor:none}
-.visual-jumps{display:flex;gap:6px}.visual-jumps button{border:1px solid var(--line);border-radius:4px;background:var(--white);color:var(--green);padding:8px 10px;font:10px var(--mono);cursor:pointer;min-height:36px}.visual-jumps button:first-child{background:var(--green);color:white;border-color:var(--green)}
-.walkthrough-layout[data-step="0"] #show-encoding,.walkthrough-layout[data-step="1"] #show-encoding{display:none}
-@media(max-width:760px){
- .atlas-body .site-header{height:48px;padding:8px 0}.walkthrough-intro{padding:8px 0}.walkthrough-intro .eyebrow{display:none}.walkthrough-intro h1{font-size:19px}.method-picker{padding:7px 0;flex-wrap:nowrap}.method-picker>label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}.method-picker select{padding:7px 9px;width:auto;flex:1}.method-picker button{white-space:nowrap}
- .walkthrough-layout{overflow:hidden}.visual-pane{order:-1;min-height:0;height:clamp(300px,46dvh,410px);flex-shrink:0;border-bottom:1px solid var(--line)}.visual-heading{padding:7px 10px;gap:5px}.visual-jumps button{font-size:9px;padding:7px 9px;min-height:36px}.visual-scroll{overflow-y:auto;overscroll-behavior:auto;min-height:0;padding:0 10px 14px}.visual-scroll .example-heading{padding-top:8px}.visual-scroll .example-heading p{font-size:9px}.visual-scroll .scene-toolbar{padding:7px 0;gap:4px}.visual-scroll .camera-actions button{min-width:34px;min-height:34px;padding:6px}.visual-scroll #space,.walkthrough-layout[data-step="2"] #space,.walkthrough-layout[data-step="3"] #space{height:clamp(190px,27dvh,240px)}.visual-scroll .stage-caption{padding:10px;font-size:7px;gap:4px}.visual-scroll .stage-bottom{padding:0 10px 9px;font-size:7px}.visual-scroll .stage-bottom>span{display:none}
- .lesson-pane{height:clamp(245px,37dvh,355px);min-height:0;flex-shrink:0}.lesson-scroll{max-height:none;min-height:0;padding:14px 16px}.method-heading{display:flex;align-items:baseline;gap:12px;padding-bottom:10px}.method-heading .eyebrow,.method-heading #method-summary{display:none}.method-heading h2{font-size:20px;margin:0}.method-heading>a{padding:0;font-size:9px}.tour-progress{padding-top:8px}#tour-outline{margin:9px 0 14px}.tour-dot span{width:23px;height:23px}.tour-dot:before{top:11px}.tour-dot small{font-size:8px}.tour-lesson>.eyebrow{display:none}.tour-lesson h3{font-size:20px;margin-bottom:10px}.tour-navigation{padding:8px 12px}.tour-navigation button{min-height:40px}.tour-navigation>span{font-size:9px}
-}
-@media(max-width:760px) and (max-height:700px){.walkthrough-intro{display:none}.visual-pane{height:340px}.lesson-pane{height:315px}.visual-scroll #space,.walkthrough-layout[data-step="2"] #space,.walkthrough-layout[data-step="3"] #space{height:190px}}
+@media(max-width:700px) and (max-height:600px){.walkthrough-layout{grid-template-rows:48px 290px minmax(0,1fr)}.method-heading h1{font-size:20px}}
+@media print{.atlas-body{height:auto;overflow:visible}.atlas-body main{height:auto}.walkthrough-layout{display:block;overflow:visible}.lesson-scroll{overflow:visible;padding:20px}.method-picker,.tour-navigation,.visual-heading,.lesson-tools,.scene-tools{display:none}.lesson-pane{display:block;border:0}.visual-pane{height:500px}.atlas-body dialog[open]{position:static;width:100%;max-height:none;box-shadow:none;border:0}}

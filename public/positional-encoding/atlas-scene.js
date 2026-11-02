@@ -61,11 +61,11 @@ export class PositionScene {
     const floor=Math.max(max[1]+.8,1),step=Math.max(1,Math.ceil(extent/10));
     for(let i=0;i<=8;i++){
       const s=(i-4)*step;
-      this.segment([this.center[0]+s,floor,this.center[2]-4*step],[this.center[0]+s,floor,this.center[2]+4*step],'#aecbb910');
-      this.segment([this.center[0]-4*step,floor,this.center[2]+s],[this.center[0]+4*step,floor,this.center[2]+s],'#aecbb910');
+      this.segment([this.center[0]+s,floor,this.center[2]-4*step],[this.center[0]+s,floor,this.center[2]+4*step],'#284f3210');
+      this.segment([this.center[0]-4*step,floor,this.center[2]+s],[this.center[0]+4*step,floor,this.center[2]+s],'#284f3210');
     }
     const origin=min.map(x=>x-.8),axisLength=Math.max(3,extent*.35);
-    ['#f0bd78','#d99371','#91b9ee'].forEach((color,axis)=>{
+    ['#99681e','#ac583e','#416da5'].forEach((color,axis)=>{
       const end=[...origin];end[axis]+=axisLength;this.segment(origin,end,color,1.3);
       const p=this.project(end);c.fillStyle=color;c.font='10px Consolas, monospace';c.fillText(this.axes?.[axis]||String(axis),p.x+5,p.y-6);
     });
@@ -74,18 +74,19 @@ export class PositionScene {
     for(const r of this.records){
       if(r.excluded)continue;
       if(r.token.type!=='text'){
-        for(const [dh,dw]of[[0,1],[1,0]]){const n=byCell.get(`${r.token.group}:${r.token.f}:${r.token.h+dh}:${r.token.w+dw}`);if(n)this.segment(r.point,n.point,'#a8d2c235',.7);}
+        for(const [dh,dw]of[[0,1],[1,0]]){const n=byCell.get(`${r.token.group}:${r.token.f}:${r.token.h+dh}:${r.token.w+dw}`);if(n)this.segment(r.point,n.point,'#42694740',.7);}
       }
     }
     const q=this.records[this.query],k=this.records[this.key];
-    if(q&&k&&q!==k&&!q.excluded&&!k.excluded)this.segment(q.point,k.point,'#f2d99a99',1.4,true);
+    if(q&&k&&q!==k&&!q.excluded&&!k.excluded)this.segment(q.point,k.point,'#a4763499',1.4,true);
     const sorted=this.records.map(r=>({...r,screen:this.project(r.point)})).sort((a,b)=>a.screen.z-b.screen.z);
     const textCount=this.records.filter(r=>r.token.type==='text').length;
+    const labels=[];
     for(const record of sorted){
       const {token,screen}=record;const isText=token.type==='text';const selected=token.id===this.query,inspected=token.id===this.key;
       const size=Math.max(4,Math.min(24,this.unit*.82)),p=screen;
       c.globalAlpha=record.excluded ? .22 : 1;
-      let fill=isText?'#e8c990':token.type==='video'?'#9caeea':'#78bfaa';
+      let fill=isText?'#b8873d':token.type==='video'?'#7a8cc6':'#609c87';
       if(isText){
         c.beginPath();c.arc(p.x,p.y,Math.max(4,size*.28),0,Math.PI*2);c.fillStyle=fill;c.fill();
       }else if(this.colorMode==='texture'&&this.textures?.[token.group]?.[token.f]){
@@ -99,21 +100,25 @@ export class PositionScene {
           c.save();c.transform(b.x-a.x,b.y-a.y,d.x-a.x,d.y-a.y,a.x,a.y);c.imageSmoothingEnabled=false;c.drawImage(texture,token.w*cw,token.h*ch,cw,ch,0,0,1,1);c.restore();
         }else {c.imageSmoothingEnabled=false;c.drawImage(texture,token.w*cw,token.h*ch,cw,ch,p.x-size/2,p.y-size/2,size,size);}
       }else {c.fillStyle=fill;c.fillRect(p.x-size/2,p.y-size/2,size,size);}
-      if(selected||inspected){c.strokeStyle=selected?'#ffd186':'#9dc5ff';c.lineWidth=2;c.beginPath();c.arc(p.x,p.y,Math.max(8,size*.72),0,Math.PI*2);c.stroke();}
+      if(selected||inspected){c.strokeStyle=selected?'#b17830':'#356aa0';c.lineWidth=2;c.beginPath();c.arc(p.x,p.y,Math.max(8,size*.72),0,Math.PI*2);c.stroke();}
       if((selected||inspected)||(isText&&textCount<=12)||(!isText&&token.h===0&&token.w===0)){
-        c.font=(selected?'bold ':'')+'10px Consolas, monospace';c.fillStyle=selected?'#ffe2a9':inspected?'#c2dcff':'#c6d9cd';
+        c.font=(selected?'bold ':'')+'10px Consolas, monospace';c.fillStyle=selected?'#875617':inspected?'#2d6293':'#52665c';
         const text=(selected?'A · ':inspected?'B · ':'')+token.label.slice(0,24);
-        const textWidth=c.measureText(text).width;
-        const right=p.x+size*.6+4;
-        const labelX=right+textWidth>this.width-10?p.x-size*.6-4-textWidth:right;
-        c.fillText(text,Math.max(10,labelX),Math.max(50,Math.min(this.height-12,p.y-5)));
+        labels.push({text,priority:selected||inspected?0:isText?1:2,x:p.x,y:p.y,size,color:c.fillStyle});
       }
       c.globalAlpha=1;this.targets.push({id:token.id,x:p.x,y:p.y,radius:Math.max(10,size*.8)});
     }
-    // Orientation widget, independent of scene scale or centering.
-    const oldCenter=this.center,oldUnit=this.unit,oldWidth=this.width,oldHeight=this.height;
-    this.center=[0,0,0];this.unit=23;this.width=100;this.height=oldHeight*2-115;
-    ['#f0bd78','#d99371','#91b9ee'].forEach((color,i)=>{const e=[0,0,0];e[i]=1;this.segment([0,0,0],e,color,2);const p=this.project(e);c.fillStyle=color;c.font='9px Consolas';c.fillText(['t','h','w'][i],p.x+3,p.y-3);});
-    this.center=oldCenter;this.unit=oldUnit;this.width=oldWidth;this.height=oldHeight;
+    // Lay labels out after the geometry; selected tokens get first choice.
+    // On narrow screens this prevents a cluster of overlapping patch names.
+    const occupied=[];
+    c.font='10px Consolas, monospace';
+    for(const label of labels.sort((a,b)=>a.priority-b.priority)){
+      const width=c.measureText(label.text).width;
+      const candidates=[ [label.x+label.size*.6+4,label.y-5], [label.x-width-8,label.y-5], [label.x-width/2,label.y-22], [label.x-width/2,label.y+24] ];
+      const point=candidates.map(([x,y])=>[Math.max(10,Math.min(this.width-width-10,x)),Math.max(36,Math.min(this.height-12,y))]).find(([x,y])=>!occupied.some(r=>x<r.x+r.w+4&&x+width+4>r.x&&y-11<r.y+14&&y+3>r.y));
+      if(!point)continue;
+      const [x,y]=point;
+      occupied.push({x,y:y-11,w:width});c.fillStyle=label.color;c.fillText(label.text,x,y);
+    }
   }
 }

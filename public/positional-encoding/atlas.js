@@ -63,22 +63,9 @@ function rebuild(resetQuery=false){
   $('example-description').textContent=`${context.tokens.length} illustrative tokens${state.scene==='text'?'':' · 4 × 4 patches per frame'} · fixed sample, no model tokenization`;
   render();
 }
-function listMethods(){
-  const search=$('method-search').value.toLowerCase().trim(),family=$('family-filter').value;
-  const families=['Foundations','Rotary & context','Vision','Multimodal','Video'];
-  const entries=methods.filter(m=>(family==='all'||m.family===family)&&`${m.name} ${m.summary} ${m.family}`.toLowerCase().includes(search)).sort((a,b)=>families.indexOf(a.family)-families.indexOf(b.family));
-  $('method-list').replaceChildren();let current='';
-  for(const m of entries){
-    if(m.family!==current){$('method-list').append(element('p',m.family,'family-label'));current=m.family;}
-    const button=element('button',undefined,'method-button');button.dataset.method=m.id;button.setAttribute('aria-pressed',String(m.id===state.method));
-    button.append(element('span',m.name),element('small',m.year.split(' ')[0]));button.addEventListener('click',()=>selectMethod(m.id));$('method-list').append(button);
-  }
-  $('search-empty').hidden=entries.length>0;
-}
 function selectMethod(id){
   state.method=id;state.step=0;
-  $('method-select').value=id;$('method-catalog').hidden=true;$('browse-methods').setAttribute('aria-expanded','false');
-  listMethods();goToStep(0,false);analytics.track('method_select',id);
+  $('method-select').value=id;goToStep(0,false);analytics.track('method_select',id);
 }
 function goToStep(index,focus=true){
   const next=Math.max(0,Math.min(4,index));
@@ -87,43 +74,29 @@ function goToStep(index,focus=true){
   setControls();scene.reset();rebuild(false);
   document.querySelector('.lesson-scroll').scrollTop=0;
   document.querySelector('.visual-scroll').scrollTop=0;
-  if(state.step===2)showVisualPanel('encoding-view');
+  showVisualPanel(state.step===2||state.step===3?'encoding-view':'geometry-view');
   if(focus)$('tour-title').focus({preventScroll:true});
-  // Keep both panels in view when navigation or focus scrolls a narrow viewport.
-  if(matchMedia('(max-width:760px)').matches){
-    const top=$('lab-top').getBoundingClientRect().top+window.scrollY;
-    window.scrollTo({top:Math.min(window.scrollY,top),behavior:'instant'});
-  }
+
 }
 function renderTour(){
   const step=tours[state.method][state.step];
   $('lab-top').dataset.step=state.step;
-  $('tour-counter').textContent=`Step ${state.step+1} of 5`;
   $('tour-short-progress').textContent=`${state.step+1} / 5`;
   $('tour-title').textContent=step.title;$('tour-body').textContent=step.body;
   $('tour-focus').textContent=stepNames[state.step].toUpperCase();
-  $('visual-step-label').textContent=`${String(state.step+1).padStart(2,'0')} / ${stepNames[state.step].toUpperCase()}`;
-  $('tour-prev').disabled=state.step===0;$('tour-next').disabled=state.step===4;
-  $('tour-next').textContent=state.step===4?'Complete ✓':'Next →';
-  $('tour-outline').replaceChildren(...stepNames.map((name,i)=>{
-    const button=element('button',undefined,'tour-dot');button.append(element('span',String(i+1)),element('small',name));
-    button.setAttribute('aria-label',`Step ${i+1}: ${name}`);if(i===state.step)button.setAttribute('aria-current','step');
-    button.addEventListener('click',()=>goToStep(i));return button;
-  }));
-  const eq=references[state.method].equations;
-  $('tour-equation').hidden=state.step===0||state.step===4;
-  $('tour-equation').replaceChildren(...eq.map(text=>element('code',text)));
+  $('tour-prev').disabled=state.step===0;$('tour-next').disabled=false;
+  $('tour-next').textContent=state.step===4?'Restart ↺':'Next →';
   const a=positions[state.query],b=positions[state.key];
   let observation;
   if(state.step===0)observation=`${context.tokens.length} tokens in the fixed sample. ${state.scene==='text'?'The dots follow sequence order.':'Each image tile is one patch token containing 12 × 12 pixels. The original grid is shown before assigning position IDs.'}`;
-  else if(state.step===1)observation=`Token A: ${a.token.label} → ${tuple(a)}. Token B: ${b.token.label} → ${tuple(b)}. ${method().geometry}`;
-  else if(method().kind==='rotary'||state.method==='sinusoidal'){
+  else if(state.step===1)observation=`Token A: ${a.token.label} → ${tuple(a)}. Token B: ${b.token.label} → ${tuple(b)}.`;
+  else if(method().kind==='rotary'){
     const info=pairInfo(state.method,state.pair,state.options),pa=phase(a,state.method,state.pair,state.options),pb=phase(b,state.method,state.pair,state.options);
     observation=`Pair ${state.pair} uses ${info.name}, with frequency ${info.frequency.toPrecision(3)}. A has phase ${pa.toFixed(3)} rad and B has phase ${pb.toFixed(3)} rad; the difference is ${(pb-pa).toFixed(3)} rad.`;
   }else observation=$('components-readout').textContent;
   if(state.step===4)observation=method().experiment;
   $('tour-observation').textContent=observation;
-  $('tour-hint').textContent=state.step===0?'Drag the scene to rotate it. Next assigns this method’s position IDs.':state.step===1?'The points now use the encoding’s indices. Next shows how those indices become a positional signal.':state.step===2?'Inspect a component or frequency pair. Next selects a different token pair for comparison.':state.step===3?'Change a positional parameter or select another token. The numerical observation updates with the visualization.':'The full explorer is available. Restart returns to the fixed walkthrough example; method notes and sources remain below.';
+
 }
 function setControls(){
   $('frequency-base').value=state.options.base;$('timing').value=state.options.timing;$('color-mode').value=state.color;
@@ -144,13 +117,12 @@ function render(){
   if(!eligible.includes(state.query))state.query=eligible.at(-1)??0;
   state.key=Math.min(state.key,positions.length-1);if(positions[state.key].excluded)state.key=eligible[0]??0;state.pair=Math.min(state.pair,PAIRS-1);
   const m=method();
-  $('method-family').textContent=`${m.family.toUpperCase()} / ${m.year}`;$('method-name').textContent=m.name;$('method-summary').textContent=m.summary;$('method-source').href=m.source;
-  $('geometry-explanation').textContent=state.view==='source'?(state.step===0?'The original token layout, before position IDs are assigned. Next applies this method’s coordinate rule.':'Source layout preserves the original patch grid independently of the chosen encoding.'):m.geometry;
-  renderReference();$('method-experiment').textContent=m.experiment;$('method-limits').textContent=m.limits;
+  $('method-name').textContent=m.name;$('notes-title').textContent=m.name+' — method notes';$('method-summary').textContent=m.summary;$('method-source').href=m.source;
+  renderReference();$('method-limits').textContent=m.limits;
   $('frequency-description').textContent=m.frequency;
   $('geometry-caption').textContent=state.method==='vrope'?'3D parameterization · inspect all four IDs':state.view==='source'?'Input layout · independent of the encoding':'Position IDs · not hidden embeddings';
   $('space-title').textContent=state.view==='source'?'SOURCE CONTEXT LAYOUT':state.method==='vrope'?'FOUR COORDINATES · THREE-DIMENSIONAL VIEW':'POSITION-INDEX SPACE';
-  $('space-hint').textContent='Drag to orbit · zoom · click B · shift-click A';
+  $('space-hint').textContent='Drag to rotate · click B · shift-click A';
   const selects=[['query-token',state.query],['key-token',state.key]];
   for(const[id,value]of selects){$(id).replaceChildren(...positions.map(p=>{const el=option(p.token.id,`${p.token.id} · ${p.token.label}`);if(p.excluded)el.disabled=true;return el;}));$(id).value=value;}
   controlsForMethod();renderScene();renderInspector();renderComponents();renderFrequency();renderTable();renderTour();
@@ -219,7 +191,7 @@ function renderComponents(){
 function renderFrequency(){
   $('pair-select').value=state.pair;
   const rotary=method().kind==='rotary',sin=state.method==='sinusoidal';
-  $('frequency-panel').hidden=!rotary&&!sin;
+  $('frequency-panel').hidden=!rotary;
   if(!rotary&&!sin)return;
   $('frequency-strip').replaceChildren();
   if(rotary||sin)for(let j=0;j<PAIRS;j++){
@@ -245,7 +217,7 @@ function renderTable(){
 function populateReading(){
   $('reading-index').replaceChildren(...methods.filter(m=>m.id!=='none').map(m=>{
     const row=element('div',undefined,'reading-item'),link=element('a',m.name);link.href=m.source;link.target='_blank';link.rel='noopener';link.append(element('small',`${m.year} · ${m.family}`));
-    const button=element('button','Explore ↗');button.addEventListener('click',()=>{selectMethod(m.id);$('lab-top').scrollIntoView({behavior:'smooth',block:'start'});});row.append(link,button);return row;
+    const button=element('button','Explore ↗');button.addEventListener('click',()=>{selectMethod(m.id);$('library-dialog').close();$('method-select').focus();});row.append(link,button);return row;
   }));
   $('further-reading').replaceChildren(...furtherReading.map(m=>{const item=element('div'),link=element('a',`${m.name} · ${m.year}`);link.href=m.url;item.append(link,element('p',m.note));return item;}));
 }
@@ -255,21 +227,25 @@ $('method-select').replaceChildren(...['Foundations','Rotary & context','Vision'
 }));
 $('method-select').value=state.method;
 $('method-select').addEventListener('change',()=>selectMethod($('method-select').value));
-$('browse-methods').addEventListener('click',()=>{const open=$('method-catalog').hidden;$('method-catalog').hidden=!open;$('browse-methods').setAttribute('aria-expanded',String(open));if(open)$('method-search').focus();});
 function showVisualPanel(id){
-  const scroll=document.querySelector('.visual-scroll');
-  const panel=$(id);
-  scroll.scrollTop=id==='geometry-view'?0:scroll.scrollTop+panel.getBoundingClientRect().top-scroll.getBoundingClientRect().top;
+  for(const [panel,button] of [['geometry-view','show-geometry'],['encoding-view','show-encoding']]){
+    $(panel).hidden=panel!==id;
+    $(button).setAttribute('aria-pressed',String(panel===id));
+  }
+  document.querySelector('.visual-scroll').scrollTop=0;
   scene.requestDraw();
+}
+for(const [button,id] of [['open-notes','notes-dialog'],['open-settings','settings-dialog'],['open-library','library-dialog']]){
+  $(button).addEventListener('click',()=>$(id).showModal());
+  $(id).querySelector('[data-close]').addEventListener('click',()=>$(id).close());
 }
 $('show-geometry').addEventListener('click',()=>showVisualPanel('geometry-view'));
 $('show-encoding').addEventListener('click',()=>showVisualPanel('encoding-view'));
 $('tour-prev').addEventListener('click',()=>goToStep(state.step-1));
-$('tour-next').addEventListener('click',()=>goToStep(state.step+1));
+$('tour-next').addEventListener('click',()=>goToStep(state.step===4?0:state.step+1));
 $('restart-tour').addEventListener('click',()=>goToStep(0));
 $('explore-freely').addEventListener('click',()=>goToStep(4));
 $('tour-title').addEventListener('keydown',event=>{if(event.key==='ArrowRight'||event.key==='ArrowLeft'){event.preventDefault();goToStep(state.step+(event.key==='ArrowRight'?1:-1));}});
-$('method-search').addEventListener('input',listMethods);$('family-filter').addEventListener('change',listMethods);
 $('example').addEventListener('change',()=>{state.scene=$('example').value;rebuild(true);scene.reset();});
 $('timing').addEventListener('change',()=>{state.options.timing=$('timing').value;render();});
 $('query-token').addEventListener('change',()=>{state.query=Number($('query-token').value);render();});$('key-token').addEventListener('change',()=>{state.key=Number($('key-token').value);render();});
@@ -278,7 +254,7 @@ for(const name of['scale','stride','radius','angle','head','seed','slope','incre
 for(const [id,value]of[['view-source','source'],['view-encoded','encoded']])$(id).addEventListener('click',()=>{state.view=value;scene.reset();render();});
 $('color-mode').addEventListener('change',()=>{state.color=$('color-mode').value;renderScene();});
 $('pair-select').append(...Array.from({length:PAIRS},(_,j)=>option(j,`Pair ${j}`)));$('pair-select').addEventListener('change',()=>{state.pair=Number($('pair-select').value);renderFrequency();renderTour();});
-$('rotate-left').addEventListener('click',()=>scene.orbit(-.25,0));$('rotate-right').addEventListener('click',()=>scene.orbit(.25,0));$('zoom-in').addEventListener('click',()=>scene.zoomBy(1.2));$('zoom-out').addEventListener('click',()=>scene.zoomBy(1/1.2));$('reset-view').addEventListener('click',()=>scene.reset());
+$('zoom-in').addEventListener('click',()=>scene.zoomBy(1.2));$('zoom-out').addEventListener('click',()=>scene.zoomBy(1/1.2));$('reset-view').addEventListener('click',()=>scene.reset());
 $('copy-link').addEventListener('click',async()=>{
   const params=new URLSearchParams({method:state.method,step:String(state.step),scene:state.scene,query:String(state.query),key:String(state.key),pair:String(state.pair),color:state.color});
   for(const key of['base','scale','stride','radius','angle','head','seed','slope','increment','timing'])params.set(key,String(state.options[key]));
@@ -292,7 +268,9 @@ $('export-data').addEventListener('click',()=>{
 });
 
 $('consent').hidden=!analytics.needsChoice;
-$('privacy-settings').addEventListener('click',()=>{if(analytics.available){$('consent').hidden=false;$('decline-analytics').focus();}else notify('Analytics is inactive: no ID, preview environment, or browser privacy preference.');});
+$('privacy-settings').addEventListener('click',()=>{if(analytics.available){$('library-dialog').close();$('consent').hidden=false;$('decline-analytics').focus();}else notify('Analytics is inactive: no ID, preview environment, or browser privacy preference.');});
 for(const[id,choice]of[['accept-analytics','accepted'],['decline-analytics','declined']])$(id).addEventListener('click',()=>{analytics.setChoice(choice);$('consent').hidden=true;});
-$('close-consent').addEventListener('click',()=>{$('consent').hidden=true;$('privacy-settings').focus();});
-setControls();listMethods();populateReading();rebuild(initialParams.has('scene')&&!hasLinkedQuery);$('pair-select').value=state.pair;
+$('close-consent').addEventListener('click',()=>{$('consent').hidden=true;$('open-library').focus();});
+setControls();populateReading();rebuild(initialParams.has('scene')&&!hasLinkedQuery);$('pair-select').value=state.pair;
+
+showVisualPanel(state.step===2||state.step===3?'encoding-view':'geometry-view');

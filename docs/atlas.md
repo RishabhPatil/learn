@@ -12,7 +12,9 @@ The renderer uses orthographic projection and a depth-sorted painter's algorithm
 
 ## Guided reading
 
-On desktop the left pane holds the scientific narrative and the right pane holds the synchronized construction. Five steps lead from source tokens to IDs, encoding components, a concrete comparison, and free exploration. Previous/Next and the numbered outline select deterministic presets; Restart resets the current method. Free exploration keeps the current settings and reveals all controls. Narrow screens put the explorer above the narrative, with bounded scrollable panels and persistent Previous/Next controls. The visualization header provides a 3D explorer button on every step, plus an Encoding details shortcut when those details are available.
+On desktop a full-height reading pane sits beside one large visualization. Five steps lead from source tokens to IDs, encoding components, a concrete comparison, and free exploration. Previous/Next select deterministic presets; the final Next button restarts. The geometry and encoding buttons switch views instead of scrolling through stacked panels. The encoding view shows a phase wheel for rotary methods and component vectors or relative terms for other methods. Axis allocation opens on demand.
+
+On phones, the method selector and visualization remain above a scrollable lesson, with persistent Previous/Next controls. The canvas supports touch dragging. “Adjust example” opens a keyboard-accessible dialog containing token selection, parameters, patch inspection, coordinates, and data export. “Method notes & sources” opens the full scientific reference, while the header’s “References” opens the literature index. Native dialogs support Escape and return focus to their opener. The short method introduction remains at the top of the reading pane.
 
 `atlas-tours.js` contains the method-specific narrative. `atlas-walkthrough.js` defines fixed token pairs and component selections; the controller updates the live observation from the actual displayed numbers. It never claims to run a trained model. Arrow keys on the focused step heading navigate the guide; arrow keys on the canvas continue to orbit the scene. Links include zero-based `step`; older configuration links without this field open the free explorer.
 
@@ -20,7 +22,7 @@ The interaction pattern is inspired by [Brendan Bycroft’s LLM Visualization](h
 
 ## Reference and examples
 
-Each method has a short introduction and a five-step narrative. Expand “Method notes & primary sources” for the full scientific introduction, equations, notation, primary-source citations, and the distinction between the published construction and the example. The notes live in `public/positional-encoding/atlas-reference.js`; method metadata and scope live in `public/positional-encoding/atlas-data.js`.
+Each method has a short introduction and a five-step narrative. Open “Method notes & sources” for the full scientific introduction, equations, notation, primary-source citations, and the distinction between the published construction and the example. The notes live in `public/positional-encoding/atlas-reference.js`; method metadata and scope live in `public/positional-encoding/atlas-data.js`.
 
 Fixed presets provide text, text plus one image, three video frames, or two interleaved images. All visuals use a 4×4 patch grid over a locally generated 48×48 texture. There is no context builder, editable prompt, image upload, or model tokenizer. Two-dimensional vision methods exclude text and ignore frame order. Text examples are disabled for vision-only methods.
 
