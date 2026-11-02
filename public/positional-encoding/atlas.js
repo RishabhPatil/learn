@@ -74,7 +74,7 @@ function goToStep(index,focus=true){
   setControls();scene.reset();rebuild(false);
   document.querySelector('.lesson-scroll').scrollTop=0;
   document.querySelector('.visual-scroll').scrollTop=0;
-  showVisualPanel(state.step===2||state.step===3?'encoding-view':'geometry-view');
+  showVisualPanel(state.step>=2?'encoding-view':'geometry-view');
   if(focus)$('tour-title').focus({preventScroll:true});
 
 }
@@ -190,26 +190,40 @@ function renderComponents(){
 }
 function renderFrequency(){
   $('pair-select').value=state.pair;
-  const rotary=method().kind==='rotary',sin=state.method==='sinusoidal';
+  const rotary=method().kind==='rotary';
   $('frequency-panel').hidden=!rotary;
-  if(!rotary&&!sin)return;
-  $('frequency-strip').replaceChildren();
-  if(rotary||sin)for(let j=0;j<PAIRS;j++){
-    const info=pairInfo(state.method,j,state.options),button=element('button',info.name,'frequency-pair');button.dataset.axis=info.name;
-    button.append(element('small',String(j)));button.title=`Pair ${j}: ${info.name}, frequency ${info.frequency.toPrecision(3)}`;button.setAttribute('aria-label',button.title);button.setAttribute('aria-pressed',String(j===state.pair));button.addEventListener('click',()=>{state.pair=j;$('pair-select').value=j;renderFrequency();renderTour();});$('frequency-strip').append(button);
-  }
-  const svg=$('phase-wheel');svg.replaceChildren();
+  if(!rotary)return;
   const make=(tag,attrs,text)=>{const e=document.createElementNS('http://www.w3.org/2000/svg',tag);Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,v));if(text)e.textContent=text;return e;};
-  if(rotary||sin){
-    const q=phase(positions[state.query],state.method,state.pair,state.options),k=phase(positions[state.key],state.method,state.pair,state.options),info=pairInfo(state.method,state.pair,state.options);
-    svg.append(make('circle',{cx:82,cy:72,r:49,fill:'none',stroke:'#bccbb6'}));
-    svg.append(make('line',{x1:25,y1:72,x2:139,y2:72,stroke:'#d1dbca'}));
-    for(const[a,color,label]of[[q,'#b17830','A'],[k,'#356aa0','B']]){const x=82+Math.cos(a)*49,y=72-Math.sin(a)*49;svg.append(make('line',{x1:82,y1:72,x2:x,y2:y,stroke:color,'stroke-width':2.3}),make('circle',{cx:x,cy:y,r:3,fill:color}),make('text',{x:x+6,y:y+(label==='A'?-7:13),fill:color,'font-size':11},label));}
-    $('phase-readout').textContent=`Pair ${state.pair} · axis ${info.name} · θ = ${info.frequency.toPrecision(4)}\nA phase ${q.toFixed(3)} rad\nB phase ${k.toFixed(3)} rad\nΔφ ${(k-q).toFixed(3)} rad · cos(Δφ) ${Math.cos(k-q).toFixed(4)}`;
-    $('frequency-footnote').textContent=sin?'Sine/cosine input features are shown as phase angles; their component vectors are shown above. These are additive features, not rotary transformations.':`${PAIRS} pairs / ${DIM} dimensions. Axis allocations are illustrative: equal thirds for the three-axis examples, equal quarters for VRoPE. Released checkpoints specify their own allocations. Pair indices run from high to low frequency. The wheel wraps modulo 2π; numeric phases do not.`;
-
+  // Keep the same buttons when changing selection so keyboard focus is retained.
+  if(!$('phase-grid').children.length)for(let j=0;j<PAIRS;j++){
+    const button=element('button',undefined,'phase-pair');button.type='button';
+    button.append(make('svg',{viewBox:'0 0 100 88','aria-hidden':'true'}),element('span'));
+    button.addEventListener('click',()=>{state.pair=j;renderFrequency();renderTour();});
+    $('phase-grid').append(button);
   }
+  $('frequency-strip').replaceChildren();
+  for(let j=0;j<PAIRS;j++){
+    const info=pairInfo(state.method,j,state.options),q=phase(positions[state.query],state.method,j,state.options),k=phase(positions[state.key],state.method,j,state.options);
+    const button=$('phase-grid').children[j],svg=button.querySelector('svg');
+    button.setAttribute('aria-pressed',String(j===state.pair));
+    button.setAttribute('aria-label',`Pair ${j}, axis ${info.name}, frequency ${info.frequency.toPrecision(3)}; A ${q.toFixed(3)} radians, B ${k.toFixed(3)} radians`);
+    button.title=`Pair ${j} · ${info.name} · θ = ${info.frequency.toPrecision(4)}`;
+    button.lastElementChild.textContent=`${j} · ${info.name}`;
+    svg.replaceChildren(make('circle',{cx:50,cy:44,r:32,fill:'none',stroke:'#bccbb6','stroke-width':1.2}),make('line',{x1:14,y1:44,x2:86,y2:44,stroke:'#dce2d7'}));
+    // Draw A wider and B narrower: both remain visible when their phases coincide.
+    for(const [angle,color,width,radius] of [[q,'#b17830',4.5,4],[k,'#356aa0',2,2]]){
+      const x=50+Math.cos(angle)*32,y=44-Math.sin(angle)*32;
+      svg.append(make('line',{x1:50,y1:44,x2:x,y2:y,stroke:color,'stroke-width':width}),make('circle',{cx:x,cy:y,r:radius,fill:color}));
+    }
+    const allocation=element('button',info.name,'frequency-pair');allocation.dataset.axis=info.name;
+    allocation.append(element('small',String(j)));allocation.title=button.title;allocation.setAttribute('aria-label',button.title);allocation.setAttribute('aria-pressed',String(j===state.pair));
+    allocation.addEventListener('click',()=>{state.pair=j;renderFrequency();renderTour();});$('frequency-strip').append(allocation);
+  }
+  const q=phase(positions[state.query],state.method,state.pair,state.options),k=phase(positions[state.key],state.method,state.pair,state.options),info=pairInfo(state.method,state.pair,state.options);
+  $('phase-readout').textContent=`Pair ${state.pair} · axis ${info.name} · θ = ${info.frequency.toPrecision(4)}\nA ${q.toFixed(3)} rad · B ${k.toFixed(3)} rad\nΔφ ${(k-q).toFixed(3)} rad · cos(Δφ) ${Math.cos(k-q).toFixed(4)}`;
+  $('frequency-footnote').textContent=`${PAIRS} pairs / ${DIM} dimensions in this teaching example, not an entire model or every attention head. Axis allocations are illustrative: equal thirds for the three-axis examples, equal quarters for VRoPE. Released checkpoints specify their own allocations. Pair indices run from high to low frequency. Circles wrap modulo 2π; numeric phases do not. MHRoPE shows the currently selected head.`;
 }
+
 function renderTable(){
   $('coordinate-table').replaceChildren(...positions.map((p,i)=>{const row=element('tr');row.append(element('td',`${i}: ${p.token.label}`),element('td',p.token.type),element('td',tuple(p)),element('td',p.excluded?'not encoded':'included'));return row;}));
 }
@@ -273,4 +287,4 @@ for(const[id,choice]of[['accept-analytics','accepted'],['decline-analytics','dec
 $('close-consent').addEventListener('click',()=>{$('consent').hidden=true;$('open-library').focus();});
 setControls();populateReading();rebuild(initialParams.has('scene')&&!hasLinkedQuery);$('pair-select').value=state.pair;
 
-showVisualPanel(state.step===2||state.step===3?'encoding-view':'geometry-view');
+showVisualPanel(state.step>=2?'encoding-view':'geometry-view');

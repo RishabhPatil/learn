@@ -57,9 +57,14 @@
 #frequency-description{font-size:12px;text-align:left;margin:10px 0}
 #frequency-strip{grid-template-columns:repeat(12,1fr);gap:4px}
 #frequency-footnote{font-size:11px;text-align:left;line-height:1.6;margin-top:14px}
-.frequency-detail{display:flex;flex-direction:column;gap:0;margin:22px 0}
-.frequency-detail svg{width:min(100%,420px);height:auto;min-width:0;max-height:46dvh}
-.frequency-detail p{font:13px/1.9 var(--mono);white-space:pre-line;margin:0;text-align:center}
+.phase-legend{font-size:12px;color:var(--muted);margin:18px 0 10px}
+.phase-a{color:#98621c;font-weight:bold}.phase-b{color:#356aa0;font-weight:bold}
+.phase-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;max-width:900px;width:100%;margin:0 auto}
+.phase-pair{display:flex;flex-direction:column;align-items:center;min-width:0;padding:4px 2px 8px;border:1px solid transparent;border-radius:5px;background:transparent;color:var(--muted)}
+.phase-pair:hover{background:#f0f3eb}.phase-pair[aria-pressed=true]{border-color:#658160;background:#edf2e6;color:var(--ink)}
+.phase-pair svg{display:block;width:100%;max-width:clamp(68px,11dvh,110px);height:auto}
+.phase-pair span{font:10px var(--mono);white-space:nowrap}
+.phase-readout{font:12px/1.8 var(--mono);white-space:pre-line;margin:18px 0 0;text-align:center;color:var(--muted)}
 .components-panel>.eyebrow{font-size:11px}
 .components-panel>.micro{font-size:13px;max-width:65ch}
 .components-panel .component-readout{font:13px/1.8 var(--mono);margin-top:24px}
@@ -103,8 +108,9 @@
  .method-heading .text-button{margin-top:2px;min-height:32px}.tour-lesson{padding-top:18px}#tour-title{font-size:23px;margin-bottom:12px}#tour-body{font-size:14px;line-height:1.8}.tour-observation{font-size:11px;margin-top:18px}.lesson-tools{margin-top:18px}
  .visual-heading{padding:5px 10px;gap:5px}.visual-heading button{font-size:11px;padding:5px 8px;min-height:32px}
  .geometry-view{min-height:0}.stage-caption{padding:0 16px;top:3px;font-size:8px}.scene-tools{padding:4px 12px;gap:4px}#space-hint{font-size:9px;max-width:160px}.camera-actions button{min-height:32px;min-width:32px;font-size:11px;padding:4px 6px}.geometry-caption{font-size:8px;padding:2px 12px 8px}
- #encoding-view{padding:8px 16px;justify-content:flex-start}.frequency-header{align-items:flex-start;gap:10px}.frequency-header label{font-size:11px;gap:6px;min-width:0}.frequency-header select{min-height:32px;padding:4px;width:77px!important;font-size:11px}.pair-allocation{font-size:11px;max-width:50%}.pair-allocation summary{min-height:32px;padding:6px 0}.pair-allocation[open]{max-width:100%}#frequency-strip{grid-template-columns:repeat(8,1fr)}
- .frequency-detail{flex-direction:row;flex-wrap:nowrap;margin:5px 0;gap:8px;align-items:center}.frequency-detail svg{width:44%;min-width:90px;height:auto;max-height:170px}.frequency-detail p{font-size:10px;text-align:left;line-height:1.8;flex:1}
+ #encoding-view{padding:8px 16px;justify-content:flex-start}.frequency-header{align-items:flex-start;gap:10px}.frequency-header label{font-size:11px;gap:6px;min-width:0;margin-bottom:0}.frequency-header select{min-height:32px;padding:4px;width:77px!important;font-size:11px}.pair-allocation{font-size:11px;max-width:50%}.pair-allocation summary{min-height:32px;padding:6px 0}.pair-allocation[open]{max-width:100%}#frequency-strip{grid-template-columns:repeat(8,1fr)}
+ .phase-legend{font-size:10px;line-height:1.5;margin:10px 0 6px}.phase-grid{gap:3px}.phase-pair{padding:0}.phase-pair span{font-size:8px;line-height:12px}.phase-pair svg{max-width:44px}.pair-allocation summary{white-space:nowrap;font-size:11px}.phase-readout{font-size:10px;margin-top:10px}
+
  .components-panel>.eyebrow{font-size:9px;margin-bottom:6px}.components-panel>.micro{font-size:11px;margin:0}.components-panel svg{margin:4px 0;max-height:120px}.components-panel .component-readout{font-size:10px;margin-top:4px}.components-panel details{margin-top:8px}
  .atlas-body dialog{padding:20px;max-height:88dvh;width:calc(100% - 24px)}.dialog-heading h2{font-size:22px}.atlas-body dialog .inspection-grid{grid-template-columns:1fr}.reading-index,#further-reading{grid-template-columns:1fr}
 }
