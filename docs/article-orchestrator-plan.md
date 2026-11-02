@@ -140,7 +140,9 @@ An article is complete only when all of the following hold:
 
 Do not report simulated checks, fabricated benchmarks, a saved screenshot without inspection, or a queued deployment as completed verification. If an external blocker prevents publication, leave the completed local work intact and state the exact blocker.
 
-## First article specification
+## Completed first article specification (reference)
+
+Normalization shipped on 2026-11-01. This retained brief is an example, not the next assignment.
 
 **Working title:** Normalization Explained. **Slug:** `normalization`.
 
@@ -167,4 +169,4 @@ These anchors support the initial subject choices. They are not a substitute for
 
 Use the following when ready to execute:
 
-> Act as the orchestrator for this repository. Read `docs/article-orchestrator-plan.md`, repository instructions, and the current site. Refresh and rank the horizontal deep-learning article backlog using primary sources. Launch bounded subagents for research, mathematical implementation, visualization/writing, and independent expert/novice review, respecting the available concurrency limit and file ownership. Implement one complete article, starting with Normalization Explained unless a clearly documented candidate is stronger. Integrate it into Learn, preserve the existing Position Atlas and consent-based analytics, run the acceptance checks, and publish through the existing GitHub Pages workflow. Continue through implementation and verification rather than stopping at a proposal. Finish with the deployed URL, what readers can learn and manipulate, validation, limitations, and the next two recommended articles. Do not initiate the next article beyond this batch unless requested.
+> Act as the orchestrator for this repository. Read `docs/article-orchestrator-plan.md`, repository instructions, and the current site. Refresh and rank the horizontal deep-learning article backlog using primary sources. Launch bounded subagents for research, mathematical implementation, visualization/writing, and independent expert/novice review, respecting the available concurrency limit and file ownership. Preserve the visual-learning mission and all reader-requested topics in `docs/article-backlog.md`. Check publication status first: Positional encoding and Normalization are already published. Design the visual experiment before the long explanation. Implement one unpublished article, starting with KV caching / inference memory unless the user or a clearly documented candidate changes that selection. Integrate it into Learn, preserve the existing Position Atlas and consent-based analytics, run the acceptance checks, and publish through the existing GitHub Pages workflow. Continue through implementation and verification rather than stopping at a proposal. Finish with the deployed URL, what readers can learn and manipulate, validation, limitations, and the next two recommended articles. Do not initiate the next article beyond this batch unless requested.
