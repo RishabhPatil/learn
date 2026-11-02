@@ -62,7 +62,7 @@
 .visual-scroll #frequency-strip{grid-template-columns:repeat(12,1fr);gap:5px}
 .visual-scroll .frequency-pair{font-size:10px;padding:8px 0}.visual-scroll .frequency-pair small{font-size:8px}
 .walkthrough-layout[data-step="0"] #encoding-view,.walkthrough-layout[data-step="1"] #encoding-view{display:none}
-.walkthrough-layout[data-step="2"] #geometry-view{display:none}
+.walkthrough-layout[data-step="2"] #space{height:245px}
 .walkthrough-layout:not([data-step="4"]) .example-heading label,.walkthrough-layout:not([data-step="4"]) .segmented,.walkthrough-layout:not([data-step="4"]) .scene-toolbar>label{display:none}
 .walkthrough-layout:not([data-step="4"]) .method-explanation,.walkthrough-layout:not([data-step="4"]) .coordinate-details{display:none}
 .walkthrough-layout[data-step="0"] .lab-selectors,.walkthrough-layout[data-step="0"] .parameter-controls,.walkthrough-layout[data-step="1"] .parameter-controls{display:none}
@@ -84,3 +84,14 @@
 }
 @media(prefers-reduced-motion:no-preference){.tour-lesson{animation:lesson-in .2s ease-out}@keyframes lesson-in{from{opacity:.5;transform:translateY(3px)}to{opacity:1;transform:none}}}
 @media print{.walkthrough-intro,.method-picker,.tour-progress,#tour-outline,.tour-navigation,.visual-heading{display:none}.walkthrough-layout{display:block;height:auto;max-height:none;border:0}.lesson-scroll,.visual-scroll{overflow:visible;max-height:none}.lesson-pane{border:0}.full-reference{display:block}.visual-pane{display:block}.geometry-view,#encoding-view{display:block!important}}
+
+/* Keep the explorer discoverable on short screens and on the encoding step. */
+.walkthrough-layout{overflow-anchor:none}
+.visual-jumps{display:flex;gap:6px}.visual-jumps button{border:1px solid var(--line);border-radius:4px;background:var(--white);color:var(--green);padding:8px 10px;font:10px var(--mono);cursor:pointer;min-height:36px}.visual-jumps button:first-child{background:var(--green);color:white;border-color:var(--green)}
+.walkthrough-layout[data-step="0"] #show-encoding,.walkthrough-layout[data-step="1"] #show-encoding{display:none}
+@media(max-width:760px){
+ .atlas-body .site-header{height:48px;padding:8px 0}.walkthrough-intro{padding:8px 0}.walkthrough-intro .eyebrow{display:none}.walkthrough-intro h1{font-size:19px}.method-picker{padding:7px 0;flex-wrap:nowrap}.method-picker>label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}.method-picker select{padding:7px 9px;width:auto;flex:1}.method-picker button{white-space:nowrap}
+ .walkthrough-layout{overflow:hidden}.visual-pane{order:-1;min-height:0;height:clamp(300px,46dvh,410px);flex-shrink:0;border-bottom:1px solid var(--line)}.visual-heading{padding:7px 10px;gap:5px}.visual-jumps button{font-size:9px;padding:7px 9px;min-height:36px}.visual-scroll{overflow-y:auto;overscroll-behavior:auto;min-height:0;padding:0 10px 14px}.visual-scroll .example-heading{padding-top:8px}.visual-scroll .example-heading p{font-size:9px}.visual-scroll .scene-toolbar{padding:7px 0;gap:4px}.visual-scroll .camera-actions button{min-width:34px;min-height:34px;padding:6px}.visual-scroll #space,.walkthrough-layout[data-step="2"] #space,.walkthrough-layout[data-step="3"] #space{height:clamp(190px,27dvh,240px)}.visual-scroll .stage-caption{padding:10px;font-size:7px;gap:4px}.visual-scroll .stage-bottom{padding:0 10px 9px;font-size:7px}.visual-scroll .stage-bottom>span{display:none}
+ .lesson-pane{height:clamp(245px,37dvh,355px);min-height:0;flex-shrink:0}.lesson-scroll{max-height:none;min-height:0;padding:14px 16px}.method-heading{display:flex;align-items:baseline;gap:12px;padding-bottom:10px}.method-heading .eyebrow,.method-heading #method-summary{display:none}.method-heading h2{font-size:20px;margin:0}.method-heading>a{padding:0;font-size:9px}.tour-progress{padding-top:8px}#tour-outline{margin:9px 0 14px}.tour-dot span{width:23px;height:23px}.tour-dot:before{top:11px}.tour-dot small{font-size:8px}.tour-lesson>.eyebrow{display:none}.tour-lesson h3{font-size:20px;margin-bottom:10px}.tour-navigation{padding:8px 12px}.tour-navigation button{min-height:40px}.tour-navigation>span{font-size:9px}
+}
+@media(max-width:760px) and (max-height:700px){.walkthrough-intro{display:none}.visual-pane{height:340px}.lesson-pane{height:315px}.visual-scroll #space,.walkthrough-layout[data-step="2"] #space,.walkthrough-layout[data-step="3"] #space{height:190px}}

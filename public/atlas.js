@@ -87,7 +87,13 @@ function goToStep(index,focus=true){
   setControls();scene.reset();rebuild(false);
   document.querySelector('.lesson-scroll').scrollTop=0;
   document.querySelector('.visual-scroll').scrollTop=0;
+  if(state.step===2)showVisualPanel('encoding-view');
   if(focus)$('tour-title').focus({preventScroll:true});
+  // Keep both panels in view when navigation or focus scrolls a narrow viewport.
+  if(matchMedia('(max-width:760px)').matches){
+    const top=$('lab-top').getBoundingClientRect().top+window.scrollY;
+    window.scrollTo({top:Math.min(window.scrollY,top),behavior:'instant'});
+  }
 }
 function renderTour(){
   const step=tours[state.method][state.step];
@@ -250,6 +256,14 @@ $('method-select').replaceChildren(...['Foundations','Rotary & context','Vision'
 $('method-select').value=state.method;
 $('method-select').addEventListener('change',()=>selectMethod($('method-select').value));
 $('browse-methods').addEventListener('click',()=>{const open=$('method-catalog').hidden;$('method-catalog').hidden=!open;$('browse-methods').setAttribute('aria-expanded',String(open));if(open)$('method-search').focus();});
+function showVisualPanel(id){
+  const scroll=document.querySelector('.visual-scroll');
+  const panel=$(id);
+  scroll.scrollTop=id==='geometry-view'?0:scroll.scrollTop+panel.getBoundingClientRect().top-scroll.getBoundingClientRect().top;
+  scene.requestDraw();
+}
+$('show-geometry').addEventListener('click',()=>showVisualPanel('geometry-view'));
+$('show-encoding').addEventListener('click',()=>showVisualPanel('encoding-view'));
 $('tour-prev').addEventListener('click',()=>goToStep(state.step-1));
 $('tour-next').addEventListener('click',()=>goToStep(state.step+1));
 $('restart-tour').addEventListener('click',()=>goToStep(0));

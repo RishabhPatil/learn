@@ -12,7 +12,7 @@ The renderer uses orthographic projection and a depth-sorted painter's algorithm
 
 ## Guided reading
 
-On desktop the left pane holds the scientific narrative and the right pane holds the synchronized construction. Five steps lead from source tokens to IDs, encoding components, a concrete comparison, and free exploration. Previous/Next and the numbered outline select deterministic presets; Restart resets the current method. Free exploration keeps the current settings and reveals all controls. Narrow screens stack the panes, with a bounded scrollable narrative and persistent Previous/Next controls below it.
+On desktop the left pane holds the scientific narrative and the right pane holds the synchronized construction. Five steps lead from source tokens to IDs, encoding components, a concrete comparison, and free exploration. Previous/Next and the numbered outline select deterministic presets; Restart resets the current method. Free exploration keeps the current settings and reveals all controls. Narrow screens put the explorer above the narrative, with bounded scrollable panels and persistent Previous/Next controls. The visualization header provides a 3D explorer button on every step, plus an Encoding details shortcut when those details are available.
 
 `atlas-tours.js` contains the method-specific narrative. `atlas-walkthrough.js` defines fixed token pairs and component selections; the controller updates the live observation from the actual displayed numbers. It never claims to run a trained model. Arrow keys on the focused step heading navigate the guide; arrow keys on the canvas continue to orbit the scene. Links include zero-based `step`; older configuration links without this field open the free explorer.
 
