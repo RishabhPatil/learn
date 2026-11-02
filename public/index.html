@@ -9,7 +9,7 @@
   <meta name="theme-color" content="#f7f6f0">
   <link rel="canonical" href="https://rishabhpatil.github.io/learn/">
   <meta property="og:title" content="Learn — Rishabh Patil">
-  <meta property="og:description" content="Ideas, worked through. Technical essays and interactive explorations of machine learning.">
+  <meta property="og:description" content="Browse interactive deep learning articles, scientific references, and hands-on examples.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://rishabhpatil.github.io/learn/">
   <meta name="twitter:card" content="summary">
@@ -26,78 +26,35 @@
   </header>
   <main class="wrap" id="main">
     <section class="intro" aria-labelledby="title">
-      <p class="eyebrow"><span class="dot" aria-hidden="true"></span> LEARNING & RESEARCH</p>
-      <h1 id="title">Ideas,<br><em>worked through.</em></h1>
-      <div class="intro-bottom"><p>Notes on machine learning, from the underlying mathematics to the details you can see and explore.</p><span class="margin-note">READ · EXPLORE · REVISIT</span></div>
+      <p class="eyebrow">NOTES BY RISHABH PATIL</p>
+      <h1 id="title">Learning &amp; research</h1>
+      <p>Deep learning, explained through interactive examples and primary sources.</p>
     </section>
     <section class="collection" aria-labelledby="collection-title">
-      <div class="section-label"><h2 id="collection-title">The collection</h2><span>02 / INTERACTIVE ARTICLES</span></div>
-      <article class="entry">
-        <div class="entry-copy">
-          <p class="eyebrow">INTERACTIVE ESSAY & RESEARCH ATLAS</p>
-          <h3><a href="/learn/positional-encoding/">Position,<br><em>Explained.</em></a></h3>
-          <p>How does a model know where a token belongs? Start with sinusoidal signals and rotary embeddings, then explore position across text, images, and video.</p>
-          <ul class="tags" aria-label="Topics"><li>Transformers</li><li>RoPE</li><li>Multimodal models</li></ul>
-          <div class="entry-actions"><a class="primary" href="/learn/positional-encoding/atlas.html">Explore the 3D atlas <span aria-hidden="true">↗</span></a><a class="text-link" href="/learn/positional-encoding/">Start with the guide <span aria-hidden="true">→</span></a></div>
-          <p class="entry-note">20 encoding configurations · guided walkthroughs · primary sources</p>
-        </div>
-        <a class="figure-link" href="/learn/positional-encoding/atlas.html" aria-label="Open the Position Atlas interactive 3D explorer">
-          <figure>
-            <div class="figure-label"><span>FROM SEQUENCE TO SPACE</span><span>FIG. 01</span></div>
-            <svg viewBox="0 0 480 340" role="img" aria-labelledby="diagram-title diagram-description">
-              <title id="diagram-title">Text positions and an image patch grid</title>
-              <desc id="diagram-description">An illustrative spatial layout with text tokens on a line and image patches in a plane. Open the atlas to manipulate the actual position indices.</desc>
-              <defs><pattern id="grid" width="34" height="34" patternUnits="userSpaceOnUse" patternTransform="matrix(1 .35 -1 .35 240 188)"><path d="M34 0H0V34" fill="none" stroke="#44625a" stroke-width=".7"/></pattern></defs>
-              <path d="M30 238 240 164 450 238 240 312Z" fill="url(#grid)"/>
-              <g fill="none" stroke="#90b1a1" stroke-width="1.2"><path d="M93 247 240 298 389 247M240 298V104"/><path d="m89 245 7-1-1 7m290-8 6 2-1 6m-153-141 3-7 3 7"/></g>
-              <g fill="#b2c4b8" font-family="monospace" font-size="11"><text x="76" y="268">height</text><text x="369" y="268">width</text><text x="250" y="107">position</text></g>
-              <g transform="matrix(1 .35 0 1 159 101)" stroke="#193e33" stroke-width="3">
-                <path d="M0 0H112V112H0Z" fill="#abc7b0"/>
-                <path d="M0 0H28V28H0ZM56 0H84V28H56ZM28 28H56V56H28ZM84 28H112V56H84ZM0 56H28V84H0ZM56 56H84V84H56ZM28 84H56V112H28ZM84 84H112V112H84Z" fill="#6c9b83"/>
-                <path d="M28 28H56V56H28Z" fill="#d39b72"/><path d="M56 56H84V84H56Z" fill="#9cb7cc"/>
-                <path d="M28 0V112M56 0V112M84 0V112M0 28H112M0 56H112M0 84H112" fill="none"/>
-              </g>
-              <path d="M92 79 129 92 165 105M281 241 315 253 350 266" fill="none" stroke="#d8c18b" stroke-width="1.2" stroke-dasharray="3 5"/>
-              <g fill="#e8d098"><circle cx="92" cy="79" r="5"/><circle cx="129" cy="92" r="5"/><circle cx="165" cy="105" r="5"/><circle cx="281" cy="241" r="5"/><circle cx="315" cy="253" r="5"/><circle cx="350" cy="266" r="5"/></g>
-              <g fill="#dce8de" font-family="monospace" font-size="11"><text x="72" y="59">text</text><text x="284" y="171">image</text><text x="284" y="187">patches</text><text x="309" y="235">text</text></g>
-              <path d="M276 174H264" stroke="#abc7b0"/>
-            </svg>
-            <figcaption><span>A token sequence. A spatial structure.</span><span aria-hidden="true">↗</span></figcaption>
-          </figure>
-        </a>
-      </article>
-      <article class="entry" style="border-top:1px solid var(--line)">
-        <div class="entry-copy">
-          <p class="eyebrow">INTERACTIVE MATHEMATICAL REFERENCE</p>
-          <h3><a href="./normalization/">Normalization,<br><em>Explained.</em></a></h3>
-          <p>Which numbers are normalized together, and what does centering change? Follow one activation through LayerNorm, RMSNorm, BatchNorm and GroupNorm.</p>
-          <ul class="tags" aria-label="Topics"><li>Activations</li><li>Reduction axes</li><li>Training & inference</li></ul>
-          <div class="entry-actions"><a class="primary" href="./normalization/">Explore normalization <span aria-hidden="true">↗</span></a></div>
-          <p class="entry-note">4 methods · exact local calculations · controlled experiments</p>
-        </div>
-        <a class="figure-link" href="./normalization/" aria-label="Open Normalization Explained">
-          <figure>
-            <div class="figure-label"><span>WHICH NUMBERS BELONG TOGETHER?</span><span>FIG. 02</span></div>
-            <svg viewBox="0 0 480 340" role="img" aria-labelledby="norm-diagram-title norm-diagram-description">
-              <title id="norm-diagram-title">A four-feature LayerNorm example</title>
-              <desc id="norm-diagram-description">Inputs 1, 2, 3 and 4 share mean 2.5 and variance 1.25. Centering and rescaling produces approximately minus 1.34, minus 0.45, 0.45 and 1.34.</desc>
-              <g font-family="monospace" text-anchor="middle">
-                <text x="240" y="43" fill="#b1c9ba" font-size="12">ONE VECTOR · FOUR FEATURES</text>
-                <g fill="#2d5142" stroke="#8caf91"><rect x="45" y="70" width="80" height="68" rx="5"/><rect x="148" y="70" width="80" height="68" rx="5"/><rect x="251" y="70" width="80" height="68" rx="5"/><rect x="354" y="70" width="80" height="68" rx="5"/></g>
-                <g fill="#e2ecdc" font-size="26"><text x="85" y="114">1</text><text x="188" y="114">2</text><text x="291" y="114">3</text><text x="394" y="114">4</text></g>
-                <path d="M85 151V170H394V151M240 170V200" fill="none" stroke="#a9bd9d"/>
-                <text x="240" y="224" fill="#e5d5a5" font-size="12">subtract mean · divide by √(variance + ε)</text>
-                <g fill="#c4d8bd" font-size="20"><text x="85" y="278">−1.34</text><text x="188" y="278">−0.45</text><text x="291" y="278">0.45</text><text x="394" y="278">1.34</text></g>
-                <text x="240" y="315" fill="#b1c9ba" font-size="11">LayerNorm · ε = 0.00001 · rounded outputs</text>
-              </g>
-            </svg>
-            <figcaption><span>Select the values. Inspect the calculation.</span><span aria-hidden="true">↗</span></figcaption>
-          </figure>
-        </a>
-      </article>
+      <div class="section-label"><h2 id="collection-title">All articles</h2><span class="article-count" id="article-count">2 articles</span></div>
+      <div class="article-list">
+        <article class="article-row" data-article>
+          <span class="article-number" aria-hidden="true">01</span>
+          <div class="article-copy">
+            <h3><a href="./positional-encoding/atlas.html">Positional encoding</a></h3>
+            <p>How models represent position across text, images, and video.</p>
+            <div class="article-meta"><span>Sinusoidal · RoPE · multimodal</span><span>20 configurations</span></div>
+          </div>
+          <div class="article-actions"><a class="article-open" href="./positional-encoding/atlas.html" aria-label="Explore positional encoding">Explore <span aria-hidden="true">→</span></a><a class="guide-link" href="./positional-encoding/">Introductory guide</a></div>
+        </article>
+        <article class="article-row" data-article>
+          <span class="article-number" aria-hidden="true">02</span>
+          <div class="article-copy">
+            <h3><a href="./normalization/">Normalization</a></h3>
+            <p>Which values belong together, and what do centering and rescaling change?</p>
+            <div class="article-meta"><span>LayerNorm · RMSNorm · BatchNorm · GroupNorm</span><span>4 methods</span></div>
+          </div>
+          <div class="article-actions"><a class="article-open" href="./normalization/" aria-label="Explore normalization">Explore <span aria-hidden="true">→</span></a></div>
+        </article>
+      </div>
       <div class="archive-row"><div><p class="eyebrow">EARLIER NOTES · 2018–2019</p><p>Hidden Markov models, principal component analysis, and text exploration.</p></div><a class="text-link" href="/Posts/">Browse the archive <span aria-hidden="true">↗</span></a></div>
     </section>
-    <section class="approach" aria-labelledby="approach-title"><p class="eyebrow">ABOUT THIS COLLECTION</p><div><h2 id="approach-title">Read the idea.<br>Inspect the construction.</h2><p>A growing home for my technical essays and research explorations. The aim is to connect explanations with inspectable examples and the original sources, making it easier to return to a topic and go deeper.</p><a class="text-link" href="https://github.com/RishabhPatil/learn/issues/new">Suggest a correction or a paper <span aria-hidden="true">↗</span></a></div></section>
+    <p class="collection-note">Each article combines a guided explanation, hands-on experiments, and primary sources. <a href="https://github.com/RishabhPatil/learn/issues/new">Suggest a topic or correction ↗</a></p>
   </main>
   <footer class="wrap"><span>Learning & Research · Rishabh Patil</span><div><a href="/">Personal homepage</a><a href="./positional-encoding/privacy.html">Privacy</a><button id="privacy-settings" type="button">Analytics preferences</button><a href="https://github.com/RishabhPatil/learn">Page source ↗</a></div></footer>
   <p id="analytics-status" class="wrap" role="status"></p>

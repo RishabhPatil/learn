@@ -104,7 +104,7 @@ Preserve the simple Position Atlas interaction pattern, without copying its posi
 
 Create each article under `public/<slug>/`. Prefer a small page/controller, pure math module, lesson/source data, and renderer; choose a simpler structure when appropriate. Add focused tests under `tests/`.
 
-The orchestrator owns updates to `public/index.html`, its structured metadata and collection count, `public/sitemap.xml`, relevant navigation, and README. Replace the homepage’s hard-coded single-entry label when a second article is actually ready. Add published entries only after their pages pass review; do not put placeholder cards in the public collection.
+The orchestrator owns updates to `public/index.html`, its structured metadata and collection count, `public/sitemap.xml`, relevant navigation, and README. Use one `article.article-row[data-article]` per published article on the homepage. Its script derives the article count and row numbers from these entries; keep the HTML fallback count current too. Companion guides stay inside their parent entry and archived notes remain separate. Add published entries only after their pages pass review; do not put placeholder cards in the public collection.
 
 Reuse the shared consent-based analytics module and measurement configuration. Verify article page identity and page views without duplicate tag initialization. New event labels must be predefined and meaningful, such as completing a lesson or running an experiment; never send arbitrary input, uploaded data, or numeric tensor contents. Preserve browser privacy preferences and the existing policy.
 

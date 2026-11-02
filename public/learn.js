@@ -1,6 +1,15 @@
 import { analyticsId } from './config.js';
 import { createAnalytics } from './analytics.js';
 
+// Count published entries, not their methods, companion guides, or archived notes.
+const articles = document.querySelectorAll('[data-article]');
+const articleCount = articles.length;
+articles.forEach((article, index) => {
+  const number = article.querySelector('.article-number');
+  if (number) number.textContent = String(index + 1).padStart(2, '0');
+});
+document.getElementById('article-count').textContent = `${articleCount} ${articleCount === 1 ? 'article' : 'articles'}`;
+
 const analytics = createAnalytics({ window, document, id: analyticsId });
 const consent = document.getElementById('consent');
 consent.hidden = !analytics.needsChoice;
