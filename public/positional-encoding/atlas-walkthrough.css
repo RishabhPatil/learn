@@ -116,3 +116,11 @@
 }
 @media(max-width:700px) and (max-height:600px){.walkthrough-layout{grid-template-rows:48px 290px minmax(0,1fr)}.method-heading h1{font-size:20px}}
 @media print{.atlas-body{height:auto;overflow:visible}.atlas-body main{height:auto}.walkthrough-layout{display:block;overflow:visible}.lesson-scroll{overflow:visible;padding:20px}.method-picker,.tour-navigation,.visual-heading,.lesson-tools,.scene-tools{display:none}.lesson-pane{display:block;border:0}.visual-pane{height:500px}.atlas-body dialog[open]{position:static;width:100%;max-height:none;box-shadow:none;border:0}}
+
+/* One useful cue and one optional experiment; explanations stay in the reading pane. */
+.experiment-button{margin-top:16px;padding:10px 13px;border:1px solid #a5b69b;border-radius:4px;background:#edf2e6;color:var(--green);font-size:12px;min-height:40px;text-align:left}
+.reading-help{margin-top:18px;font-size:12px;color:var(--muted)}
+.reading-help summary{padding:8px 0;cursor:pointer;color:var(--green);font-size:12px}
+.reading-help p{font-size:12px;line-height:1.8;margin:6px 0 0}
+.phase-pair[data-different=true] span{font-weight:bold;color:var(--ink)}
+@media(max-width:700px){.components-panel svg text{font-size:16px}.phase-readout{font-size:10px;overflow-wrap:anywhere}.reading-help p{font-size:12px}}

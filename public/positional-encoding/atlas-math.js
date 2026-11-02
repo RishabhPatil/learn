@@ -100,6 +100,8 @@ export function pairInfo(method,j,options={}) {
     axis=j%2?0:1;name=method==='mixed'?'h+w':['h','w'][axis];
     frequency=o.base**(-Math.floor(j/2)/(PAIRS/2));
   }
+  if(method==='circle') name=['c₁','c₂','c₃'][axis];
+  if(method==='mixed') name=`${o.angle+(j%2)*90}°`;
   if(method==='yarn') frequency=yarnFrequency(j,o);
   return {axis,name,frequency};
 }

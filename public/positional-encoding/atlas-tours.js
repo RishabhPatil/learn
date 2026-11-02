@@ -48,7 +48,7 @@ export const tours = {
     { title:'Place each token on the index line', body:'The scalar p is the position supplied to the rotary construction. A patch’s row and column do not survive as separate coordinates in this one-dimensional version.', focus:'geometry' },
     { title:'Turn a position into rotation angles', body:'Rotation pair j uses the angle pθⱼ, with θⱼ decreasing across the frequency bank. Each pair rotates within its own two-dimensional channel plane.', focus:'encoding' },
     { title:'Compare relative phase', body:'For two tokens, the rotation difference is (pB−pA)θⱼ. Inspecting another pair changes the frequency and therefore the phase difference for the same token separation.', focus:'compare' },
-    { title:'Keep indices and rotated vectors distinct', body:'Explore token pairs and frequency bases to see the phase construction. The scene plots position IDs, while the phase wheel represents one rotation pair; neither displays trained hidden states.', focus:'explore' }
+    { title:'Keep indices and rotated vectors distinct', body:'Explore token pairs and frequency bases to see the phase construction. The scene plots position IDs, while each small circle represents one rotation pair; neither displays trained hidden states.', focus:'explore' }
   ],
   pi: [
     { title:'Keep the sequence, change its position scale', body:'Position Interpolation retains the same tokens and their ordering. Its change is to the position argument supplied to RoPE.', focus:'source' },

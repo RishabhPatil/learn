@@ -6,7 +6,7 @@ Reviewed November 1, 2026. The catalog is deliberately extensible and explicitly
 
 1. **Source layout** retains the input patch grids for reference.
 2. **Position IDs** displays indices supplied to a positional method, not hidden states. M-RoPE uses `[t,h,w]`, with `h` as row and `w` as column. VRoPE has four directional indices; its 3D display is a labeled invertible parameterization.
-3. **Rotary phases** are high-dimensional. The frequency strip and phase wheel show their axis assignments and selected components. Identical 3D geometry can produce different positional kernels.
+3. **Rotary phases** are high-dimensional. The frequency strip and phase grid show their axis assignments and selected components. Identical 3D geometry can produce different positional kernels.
 
 The renderer uses orthographic projection and a depth-sorted painter's algorithm. Mouse drag and arrow keys orbit; the wheel and +/- zoom. There is no WebGL dependency, external CDN, or model download. Mouse picking chooses a displayed glyph; the token A/B dropdowns and full coordinate table are the exact accessible alternative when glyphs overlap. `Reset view` restores the camera.
 
@@ -24,13 +24,13 @@ The interaction pattern is inspired by [Brendan Bycroft’s LLM Visualization](h
 
 Each method has a short introduction and a five-step narrative. Open “Method notes & sources” for the full scientific introduction, equations, notation, primary-source citations, and the distinction between the published construction and the example. The notes live in `public/positional-encoding/atlas-reference.js`; method metadata and scope live in `public/positional-encoding/atlas-data.js`.
 
-Fixed presets provide text, text plus one image, three video frames, or two interleaved images. All visuals use a 4×4 patch grid over a locally generated 48×48 texture. There is no context builder, editable prompt, image upload, or model tokenizer. Two-dimensional vision methods exclude text and ignore frame order. Text examples are disabled for vision-only methods.
+Fixed presets provide text (a longer fixed sentence for Shaw/T5), text plus one image, three video frames, or two interleaved images. All visuals use a 4×4 patch grid over a locally generated 48×48 texture. There is no context builder, editable prompt, image upload, or model tokenizer. Two-dimensional vision methods exclude text and ignore frame order. Text examples are disabled for vision-only methods.
 
 ## Displayed quantities
 
 The atlas displays position IDs, coordinate differences, Euclidean distance in the plotted space, frequency assignments, and rotary phases. Sinusoidal and learned absolute entries show position-vector components. Shaw displays an illustrative clipped-offset vector; T5 displays a signed bucket and illustrative scalar; ALiBi displays its raw causal positional bias, with later comparison positions marked outside the causal domain.
 
-There are no attention distributions, content modes, masks, temperature controls, or model inference. Token A/B labels specify a positional comparison. A phase cosine is a geometric quantity for one rotation pair, not a model attention weight. MHRoPE displays one selected head’s positional axis at a time.
+There are no attention distributions, content modes, masks, temperature controls, or model inference. Token A/B labels specify a positional comparison. Phase differences are positional angles, not model attention weights. MHRoPE displays one selected head’s positional axis at a time.
 
 Configuration links include only encoding and fixed-example settings. JSON exports include IDs, phases, additive components, and relative terms, with sources and scope notes. No user text or images are collected.
 
@@ -62,3 +62,17 @@ Learned absolute, Shaw, and T5 values are deterministic example tables, not lear
 7. If the exact construction is not yet checked, keep it in `furtherReading`, not the implemented selector.
 
 Tests run with `npm test`; build and GitHub Pages deployment use the existing pipeline.
+
+
+## Research and first-reader review
+
+Two independent AI review passes checked research semantics and novice readability. The resulting changes keep the existing two-pane layout:
+
+- A computed takeaway explains the mechanism for each of the 20 configurations; exact selected-pair values stay beside the visual.
+- “How to read this view” explains source/coordinate geometry or encoding components only when requested. Rotary arrows are explicitly position-only unit-circle angles, not trained query/key vectors.
+- Explore initializes a reproducible experiment baseline and offers one method-specific action. Editing tokens or mathematical parameters switches to Explore; starting the focused experiment explicitly resets custom settings. Color and camera changes preserve the guided lesson.
+- Shaw/T5 use a fixed 22-token sentence. The guided offset changes 9→12 (Shaw: both clipped to8) or9→11 (T5: both bucket24). Clipping curves, bucket dots, and causal ALiBi penalty lines expose the mapping. Table weights remain illustrative.
+- Mixed RoPE labels frequency directions in degrees; Circle-RoPE labels projected streams c₁/c₂/c₃. VRoPE readouts refer to directional IDs, including their frame advancement.
+- A dot marks nonzero **unwrapped** phase differences. Tiny values retain significant digits; full-turn differences may still produce overlapping arrows.
+
+New checks cover shared table entries beyond the relative-position boundaries, all focused experiment selections, shared-shift RoPE invariance, Circle-RoPE distance invariance, and direction/coordinate labels. Primary source conventions remain in the table above.

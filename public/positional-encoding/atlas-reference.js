@@ -68,7 +68,7 @@ export const referenceWriteups = {
     ],
     equations: ['φⱼ(p) = pθⱼ; θⱼ = B^(−2j/d)', 'R(φ) = [[cos φ, −sin φ], [sin φ, cos φ]]', 'R(p₁θ)ᵀR(p₂θ) = R((p₂−p₁)θ)'],
     notation: 'p: position; j: rotation-pair index; d: rotary dimension; B: base. Angles are in radians.',
-    distinction: 'The scene shows scalar position IDs, while the phase wheel shows one rotation pair. Neither is a projection of trained hidden states.',
+    distinction: 'The scene shows scalar position IDs, while the grid shows the rotation pairs. Neither is a projection of trained hidden states.',
     references: [{label:'Su et al. (2021), §3 · RoFormer',url:'https://arxiv.org/abs/2104.09864'}]
   },
   pi: {
