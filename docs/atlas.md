@@ -85,3 +85,10 @@ The default entry is Sinusoidal, chapter 1 of a nine-chapter core path. `atlas-s
 The core order is pedagogical, not a chronological claim or a ranking: sinusoidal → learned absolute → RoPE → Position Interpolation → YaRN → axial → mixed → M-RoPE → absolute-time MRoPE. Learned embeddings are not treated as a failed predecessor. Shaw, T5, ALiBi and the baseline remain useful optional comparisons; the four featured research directions are part of the guided path, explicitly presented as parallel design choices rather than historical replacements.
 
 Motivations were reviewed against the primary sources already linked in `atlas-reference.js` and `atlas-data.js`: original Transformer §3.5; RoFormer §2–3; PI and YaRN; vision RoPE; Qwen2-VL and Qwen2.5-VL; and the specified versions of MRoPE-I/MHRoPE, Circle-RoPE, VRoPE, VideoRoPE, and V2PE. Interleaving is an isolated Qwen3-VL-inspired comparison, not a full checkpoint implementation. Explanations of mathematical tradeoffs are separate from claims about measured model quality. The circles and geometry still show encoding mechanics, not trained attention or semantic embeddings.
+
+
+## Combined geometry and encoding view (2026-11-02)
+
+Encoding, Compare, and Explore now show geometry above the encoding instead of replacing it. The 3D-only control remains available for focusing on coordinates. All 24 rotary pairs stay present; additive and relative methods retain their appropriate lower component plot. Token A and Token B selectors live above the scene, share its amber/blue colors, and update both views. Selecting a token enters Explore without replacing the chosen pair or resetting the camera. Canvas click/shift-click uses the same state. Excluded text tokens remain disabled for vision-only methods.
+
+Desktop keeps the combined view in the right pane. Phone layouts allow normal page scrolling so the geometry, all circles, and explanation remain accessible; Previous/Next stays fixed. Readout and circle checks cover a zero-difference same-token pair and an M-RoPE row displacement that changes exactly the height-assigned pairs.

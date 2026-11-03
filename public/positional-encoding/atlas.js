@@ -41,7 +41,7 @@ else if(!initialParams.has('step'))state.step=4;
 else state.view=state.step===0?'source':'encoded';
 if(method().family==='Vision'&&state.scene==='text')state.scene='image';
 const hasLinkedQuery=new URLSearchParams(location.hash.slice(1)).has('query');
-const scene=new PositionScene($('space'),{onSelect(id,isQuery){if(isQuery){if(positions[id].excluded){notify('Select a visual token for this vision-only method.');return;}state.query=id;}else state.key=id;customize();render();}});
+const scene=new PositionScene($('space'),{onSelect(id,isQuery){if(isQuery){if(positions[id].excluded){notify('Select a visual token for this vision-only method.');return;}state.query=id;}else state.key=id;customize();render();showVisualPanel('encoding-view');}});
 
 function sampleImage(frame,group){
   const canvas=document.createElement('canvas');canvas.width=canvas.height=48;const c=canvas.getContext('2d');
@@ -297,15 +297,21 @@ $('toggle-methods').addEventListener('click',()=>{
 });
 $('method-select').addEventListener('change',()=>selectMethod($('method-select').value));
 function showVisualPanel(id){
-  for(const [panel,button] of [['geometry-view','show-geometry'],['encoding-view','show-encoding']]){
-    $(panel).hidden=panel!==id;
-    $(button).setAttribute('aria-pressed',String(panel===id));
-  }
+  const combined=id==='encoding-view';
+  $('geometry-view').hidden=false;
+  $('encoding-view').hidden=!combined;
+  document.body.classList.toggle('combined-view',combined);
+  $('show-geometry').setAttribute('aria-pressed',String(!combined));
+  $('show-encoding').setAttribute('aria-pressed',String(combined));
   document.querySelector('.visual-scroll').scrollTop=0;
   scene.requestDraw();updateReadingHelp();
 }
 function updateReadingHelp(){
-  $('reading-help').textContent=$('geometry-view').hidden?readingGuide(state.method,method().kind==='rotary'):state.view==='source'?'Dots represent word-level teaching tokens; each tile represents one patch of 12 × 12 pixels. This is the original input layout before assigning this method’s position IDs. Drag to rotate. Select A/B exactly in Adjust example.':'This scene plots position IDs, not trained vectors. Axis labels name the coordinates used by this method; some methods need only a line or a plane. The image texture helps you follow patches when the layout changes. Drag to rotate; use Adjust example for exact A/B selection and all numeric IDs.';
+  const geometry=state.view==='source'
+    ? 'Dots represent word-level teaching tokens; each tile represents one patch of 12 × 12 pixels. This is the original input layout before assigning position IDs.'
+    : 'The 3D scene plots position IDs, not trained vectors. The image texture helps you follow patches when the layout changes.';
+  const controls=' Choose Token A and Token B above the scene, or click a token for B and shift-click for A. Drag to rotate.';
+  $('reading-help').textContent=geometry+controls+($('encoding-view').hidden?'':' Below the scene, the encoding uses those same two tokens. '+readingGuide(state.method,method().kind==='rotary'));
 }
 for(const [button,id] of [['open-notes','notes-dialog'],['open-settings','settings-dialog'],['open-library','library-dialog']]){
   $(button).addEventListener('click',()=>$(id).showModal());
@@ -333,7 +339,9 @@ $('settings-dialog').addEventListener('input',event=>{if(event.target.matches('s
 $('settings-dialog').addEventListener('change',event=>{if(event.target.matches('select,input')&&event.target.id!=='color-mode')customize();},true);
 $('example').addEventListener('change',()=>{state.scene=$('example').value;rebuild(true);scene.reset();});
 $('timing').addEventListener('change',()=>{state.options.timing=$('timing').value;render();});
-$('query-token').addEventListener('change',()=>{state.query=Number($('query-token').value);render();});$('key-token').addEventListener('change',()=>{state.key=Number($('key-token').value);render();});
+for(const [id,key] of [['query-token','query'],['key-token','key']])$(id).addEventListener('change',()=>{
+  state[key]=Number($(id).value);customize();render();showVisualPanel('encoding-view');
+});
 $('frequency-base').addEventListener('change',()=>{state.options.base=Number($('frequency-base').value);render();});
 for(const name of['scale','stride','radius','angle','head','seed','slope','increment'])$(name).addEventListener('input',()=>{state.options[name]=Number($(name).value);render();});
 for(const [id,value]of[['view-source','source'],['view-encoded','encoded']])$(id).addEventListener('click',()=>{customize();state.view=value;scene.reset();render();});

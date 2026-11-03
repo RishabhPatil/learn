@@ -144,3 +144,41 @@
 [data-step="0"] #method-summary{display:none}
 
 .research-context{font-size:12px;line-height:1.7;color:var(--muted);margin:0 0 12px}
+
+/* Keep position geometry and its encoding in one visual comparison. */
+.token-selection{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;padding:0 24px 12px;flex-shrink:0}
+.token-selection label{min-width:0;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.token-selection select{width:100%;min-width:0;margin:0;font-size:12px}
+.space-stage{position:relative}
+.combined-view .geometry-view{height:clamp(230px,34dvh,330px);min-height:230px;flex:none;border-bottom:1px solid var(--line)}
+.combined-view #encoding-view{min-height:0;justify-content:flex-start;padding:12px 24px 18px}
+.combined-view .phase-grid{grid-template-columns:repeat(8,minmax(0,1fr));gap:4px}
+.combined-view .phase-pair{padding:2px 1px 5px}
+.combined-view .phase-pair svg{max-width:64px}
+.combined-view .phase-legend{margin:8px 0}
+.combined-view .phase-readout{font-size:11px;margin:10px 0 0}
+.combined-view .geometry-caption{padding-bottom:8px}
+.combined-view .scene-tools{padding-top:4px;padding-bottom:4px}
+@media(min-width:701px) and (max-width:1100px){
+ .token-selection{padding-left:12px;padding-right:12px;gap:8px}
+ .token-selection label{display:block}.token-selection select{margin-top:4px}
+ .combined-view .phase-grid{grid-template-columns:repeat(6,minmax(0,1fr))}
+}
+@media(max-width:700px){
+ .token-selection{padding:0 12px 8px;gap:10px}
+ .token-selection label{display:block;font-size:11px}
+ .token-selection select{margin-top:3px;min-height:36px;font-size:11px;padding:5px}
+ .atlas-body.combined-view{height:auto;min-height:100dvh;overflow:auto}
+ .combined-view main{height:auto}
+ .combined-view .walkthrough-layout{display:flex;flex-direction:column;height:auto;overflow:visible}
+ .combined-view .method-picker{order:0}
+ .combined-view .visual-pane{order:1;overflow:visible}
+ .combined-view .lesson-scroll{order:2;overflow:visible;padding-bottom:90px}
+ .combined-view .visual-scroll{overflow:visible;flex:none}
+ .combined-view .geometry-view{height:240px;min-height:240px}
+ .combined-view #encoding-view{padding:12px}
+ .combined-view .phase-grid{grid-template-columns:repeat(6,minmax(0,1fr));gap:3px}
+ .combined-view .phase-pair svg{max-width:46px}
+ .combined-view .phase-pair{min-height:56px}
+ .combined-view .phase-readout{font-size:10px}
+}
