@@ -142,3 +142,5 @@
 @media(max-width:700px) and (max-height:600px){.walkthrough-layout{grid-template-rows:88px 220px minmax(0,1fr)}}
 
 [data-step="0"] #method-summary{display:none}
+
+.research-context{font-size:12px;line-height:1.7;color:var(--muted);margin:0 0 12px}

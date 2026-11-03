@@ -1,6 +1,8 @@
 // Teaching order, not a chronology or a ranking of model quality.
 export const corePath = ['sinusoidal','learned','rope','pi','yarn','axial','mixed','mrope','time-mrope'];
-export const researchPath = ['interleaved','mrope-i','mhrope','circle','vrope','videorope','v2pe'];
+export const featuredResearch = ['mrope-i','mhrope','circle','vrope'];
+export const guidedPath = [...corePath,...featuredResearch];
+export const researchPath = ['interleaved','videorope','v2pe'];
 export const alternativePath = ['none','shaw','t5','alibi'];
 
 // Motivations are scoped to the primary sources linked by each method's notes.
@@ -63,7 +65,7 @@ export const stories = {
     question:'Does the next frame mean the next second?',
     problem:'Frame indices alone do not distinguish dense sampling from large gaps in time. Qwen2.5-VL ties temporal positions to absolute video time to support varying sampling rates and temporal localization.',
     idea:'Drive the temporal coordinate with a timestamp and a ticks-per-second scale. Switch to irregular timestamps and inspect the final frame’s displacement.',
-    tradeoff:'Timestamps encode elapsed time, not motion by themselves. This completes the core path. Research branches explore frequency allocation, cross-modal geometry, and video-specific design; none is presented as a universal winner.'
+    tradeoff:'Timestamps encode elapsed time, not motion by themselves. This completes the foundations. Continue to MRoPE-I, MHRoPE, Circle-RoPE, and VRoPE: parallel research directions exploring allocation, geometry, and video rather than a sequence of replacements.'
   },
   shaw: {
     question:'Why encode the gap between tokens directly?',
@@ -128,6 +130,6 @@ export const stories = {
 };
 
 export function chapterAfter(id) {
-  const index=corePath.indexOf(id);
-  return index>=0 ? corePath[index+1] ?? null : null;
+  const index=guidedPath.indexOf(id);
+  return index>=0 ? guidedPath[index+1] ?? null : null;
 }
