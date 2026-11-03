@@ -76,3 +76,12 @@ Two independent AI review passes checked research semantics and novice readabili
 - A dot marks nonzero **unwrapped** phase differences. Tiny values retain significant digits; full-turn differences may still produce overlapping arrows.
 
 New checks cover shared table entries beyond the relative-position boundaries, all focused experiment selections, shared-shift RoPE invariance, Circle-RoPE distance invariance, and direction/coordinate labels. Primary source conventions remain in the table above.
+
+
+## Motivation-first tutorial (2026-11-02)
+
+The default entry is Sinusoidal, chapter 1 of a nine-chapter core path. `atlas-story.js` supplies each method’s problem, central idea, and tradeoff; the existing construction steps and mathematical experiments remain intact. The final step advances to the next core chapter. Research branches and other approaches are optional, and existing method/configuration URLs still resolve.
+
+The core order is pedagogical, not a chronological claim or a ranking: sinusoidal → learned absolute → RoPE → Position Interpolation → YaRN → axial → mixed → M-RoPE → absolute-time MRoPE. Learned embeddings are not treated as a failed predecessor. Shaw, T5, ALiBi and the baseline remain useful optional comparisons; newer research remains available without being required for the first reading.
+
+Motivations were reviewed against the primary sources already linked in `atlas-reference.js` and `atlas-data.js`: original Transformer §3.5; RoFormer §2–3; PI and YaRN; vision RoPE; Qwen2-VL and Qwen2.5-VL; and the specified versions of MRoPE-I/MHRoPE, Circle-RoPE, VRoPE, VideoRoPE, and V2PE. Interleaving is an isolated Qwen3-VL-inspired comparison, not a full checkpoint implementation. Explanations of mathematical tradeoffs are separate from claims about measured model quality. The circles and geometry still show encoding mechanics, not trained attention or semantic embeddings.

@@ -29,7 +29,7 @@ export const referenceWriteups = {
     equations: ['e(p) = E[p]; x′ₚ = xₚ + E[p]'],
     notation: 'E is a learned table of position vectors; p selects a row. A patch token represents a region containing multiple pixels.',
     distinction: 'The atlas uses deterministic example values, not a trained table. Its coordinate line indexes rows of E and does not visualize the embedding space.',
-    references: [{label:'Dosovitskiy et al. (2020), §3.1–3.2 · Vision Transformer',url:'https://arxiv.org/abs/2010.11929'}]
+    references: [{label:'Vaswani et al. (2017), §3.5 · fixed versus learned positions',url:'https://arxiv.org/html/1706.03762v7'},{label:'Dosovitskiy et al. (2020), §3.1–3.2 · Vision Transformer',url:'https://arxiv.org/abs/2010.11929'}]
   },
   shaw: {
     paragraphs: [

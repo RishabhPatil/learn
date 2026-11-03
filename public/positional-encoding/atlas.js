@@ -1,8 +1,9 @@
 import { tours } from './atlas-tours.js';
+import { stories, corePath, researchPath, alternativePath, chapterAfter } from './atlas-story.js';
 import { experiments, experimentPreset, insight, number, readingGuide } from './atlas-insights.js';
-import { lessonPreset, stepNames, sampleText } from './atlas-walkthrough.js';
+import { lessonPreset, stepNames, sampleText } from './atlas-walkthrough.js?v=20261102-story';
 import { methods, furtherReading } from './atlas-data.js';
-import { referenceWriteups as references } from './atlas-reference.js';
+import { referenceWriteups as references } from './atlas-reference.js?v=20261102-story';
 import { buildContext, coordinates, phase, pairInfo, eligibleQueries, axesFor, defaults, PAIRS, DIM, encodingComponents, relativeEncoding, relativeBucket } from './atlas-math.js';
 import { PositionScene } from './atlas-scene.js';
 import { analyticsId } from '../config.js';
@@ -10,8 +11,8 @@ import { createAnalytics } from '../analytics.js';
 
 const $=id=>document.getElementById(id);
 const analytics=createAnalytics({window,document,id:analyticsId});
-const state={step:0,method:'mrope',scene:'image',grid:4,prefix:'Find the red object',suffix:'Where is it now?',query:0,key:0,pair:0,view:'encoded',color:'texture',options:{...defaults}};
-let context,positions,textures=[],statusTimer,experimentAlternate=false,experimentReady=false;
+const state={step:0,method:'sinusoidal',scene:'image',grid:4,prefix:'Find the red object',suffix:'Where is it now?',query:0,key:0,pair:0,view:'encoded',color:'texture',options:{...defaults}};
+let context,positions,textures=[],statusTimer,experimentAlternate=false,experimentReady=false,showAllMethods=false;
 const safeScene=new Set(['image','video','two-images','text']);
 function notify(message){$('status').textContent=message;clearTimeout(statusTimer);statusTimer=setTimeout(()=>$('status').textContent='',6500);}
 function element(tag,text,className){const el=document.createElement(tag);if(text!==undefined)el.textContent=text;if(className)el.className=className;return el;}
@@ -66,7 +67,8 @@ function rebuild(resetQuery=false){
 }
 function selectMethod(id){
   state.method=id;state.step=0;
-  $('method-select').value=id;goToStep(0,false);analytics.track('method_select',id);
+  if(!corePath.includes(id))showAllMethods=true;
+  populateMethods();goToStep(0);analytics.track('method_select',id);
 }
 function goToStep(index,focus=true){
   experimentAlternate=false;
@@ -81,13 +83,20 @@ function goToStep(index,focus=true){
 
 }
 function renderTour(){
-  const step=tours[state.method][state.step];
+  const step=tours[state.method][state.step],story=stories[state.method],chapter=corePath.indexOf(state.method),next=chapterAfter(state.method);
+  $('chapter-progress').textContent=chapter>=0?`Core tutorial · Chapter ${chapter+1} of ${corePath.length}`:'Optional branch';
   $('lab-top').dataset.step=state.step;
   $('tour-short-progress').textContent=`${state.step+1} / 5`;
-  $('tour-title').textContent=step.title;$('tour-body').textContent=step.body;
+  $('tour-title').textContent=state.step===0?story.question:step.title;
+  $('tour-body').textContent=state.step===0?story.problem:step.body;
+  $('tour-idea').hidden=state.step!==0;$('tour-idea').textContent=story.idea;
+  $('tour-tradeoff').hidden=state.step!==4;$('tour-tradeoff').textContent=story.tradeoff;
+  $('chapter-next').hidden=state.step!==4;
+  $('chapter-next').textContent=next?`Next question: ${stories[next].question}`:chapter>=0?'Core tutorial complete. Open Research & alternatives to explore the branches.':'Choose a core chapter above to return to the main tutorial.';
   $('tour-focus').textContent=stepNames[state.step].toUpperCase();
   $('tour-prev').disabled=state.step===0;$('tour-next').disabled=false;
-  $('tour-next').textContent=state.step===4?'Restart ↺':'Next →';
+  $('tour-next').textContent=state.step===4?(next?'Next chapter →':chapter>=0?'Start again ↺':'Restart ↺'):'Next →';
+  $('tour-next').setAttribute('aria-label',state.step===4&&next?`Next chapter: ${methods.find(m=>m.id===next).name}`:$('tour-next').textContent);
   const a=positions[state.query],b=positions[state.key];
   let observation;
   if(state.step===0)observation=`${context.tokens.length} tokens in the fixed sample. ${state.scene==='text'?'The dots follow sequence order.':'Each image tile is one patch token containing 12 × 12 pixels. The original grid is shown before assigning position IDs.'}`;
@@ -267,10 +276,24 @@ function populateReading(){
   $('further-reading').replaceChildren(...furtherReading.map(m=>{const item=element('div'),link=element('a',`${m.name} · ${m.year}`);link.href=m.url;item.append(link,element('p',m.note));return item;}));
 }
 
-$('method-select').replaceChildren(...['Foundations','Rotary & context','Vision','Multimodal','Video'].map(family=>{
-  const group=element('optgroup');group.label=family;group.append(...methods.filter(m=>m.family===family).map(m=>option(m.id,m.name)));return group;
-}));
-$('method-select').value=state.method;
+function populateMethods(){
+  const groups=[['Core tutorial',corePath]];
+  if(showAllMethods)groups.push(['Research branches',researchPath],['Other approaches & baseline',alternativePath]);
+  $('method-select').replaceChildren(...groups.map(([label,ids])=>{
+    const group=element('optgroup');group.label=label;
+    group.append(...ids.map((id,i)=>option(id,`${label==='Core tutorial'?`${i+1}. `:''}${methods.find(m=>m.id===id).name}`)));return group;
+  }));
+  $('method-select').value=state.method;
+  $('toggle-methods').setAttribute('aria-expanded',String(showAllMethods));
+  $('toggle-methods').textContent=showAllMethods?'Show core tutorial only':'Research & alternatives';
+}
+showAllMethods=!corePath.includes(state.method);
+populateMethods();
+$('toggle-methods').addEventListener('click',()=>{
+  showAllMethods=!showAllMethods;
+  if(!showAllMethods&&!corePath.includes(state.method))selectMethod(corePath[0]);
+  else populateMethods();
+});
 $('method-select').addEventListener('change',()=>selectMethod($('method-select').value));
 function showVisualPanel(id){
   for(const [panel,button] of [['geometry-view','show-geometry'],['encoding-view','show-encoding']]){
@@ -297,7 +320,11 @@ $('try-experiment').addEventListener('click',()=>{
 $('show-geometry').addEventListener('click',()=>showVisualPanel('geometry-view'));
 $('show-encoding').addEventListener('click',()=>showVisualPanel('encoding-view'));
 $('tour-prev').addEventListener('click',()=>goToStep(state.step-1));
-$('tour-next').addEventListener('click',()=>goToStep(state.step===4?0:state.step+1));
+$('tour-next').addEventListener('click',()=>{
+  if(state.step<4)goToStep(state.step+1);
+  else if(corePath.includes(state.method))selectMethod(chapterAfter(state.method)??corePath[0]);
+  else goToStep(0);
+});
 $('restart-tour').addEventListener('click',()=>goToStep(0));
 $('explore-freely').addEventListener('click',()=>goToStep(4));
 $('tour-title').addEventListener('keydown',event=>{if(event.key==='ArrowRight'||event.key==='ArrowLeft'){event.preventDefault();goToStep(state.step+(event.key==='ArrowRight'?1:-1));}});

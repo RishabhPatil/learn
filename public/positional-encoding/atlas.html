@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>The Position Atlas — A scientific reference for positional encoding</title>
-  <meta name="description" content="Explore positional encoding research in an interactive 3D lab: M-RoPE, MHRoPE, MRoPE-I, Circle-RoPE, VRoPE, VideoRoPE, and more. Read source-backed definitions and inspect coordinates, frequencies, and encoding components.">
+  <title>The Position Atlas — Why positional encodings evolved</title>
+  <meta name="description" content="A visual tutorial on why positional encodings were developed: from token order to RoPE, longer contexts, images, and video. Explore the ideas, tradeoffs, and primary sources.">
   <meta name="author" content="Rishabh Patil"><meta name="theme-color" content="#f7f6f0"><meta name="referrer" content="strict-origin-when-cross-origin">
   <link rel="canonical" href="https://rishabhpatil.github.io/learn/positional-encoding/atlas.html">
-  <meta property="og:title" content="The Position Atlas"><meta property="og:description" content="One context. Many coordinate systems. Explore positional encoding research in 3D."><meta property="og:type" content="website">
-  <link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./style.css"><link rel="stylesheet" href="./atlas.css"><link rel="stylesheet" href="./atlas-walkthrough.css">
-  <script type="module" src="./atlas.js"></script>
+  <meta property="og:title" content="The Position Atlas"><meta property="og:description" content="Why each positional encoding exists. Follow the problems, explore the geometry, and test the tradeoffs."><meta property="og:type" content="website">
+  <link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./style.css"><link rel="stylesheet" href="./atlas.css"><link rel="stylesheet" href="./atlas-walkthrough.css?v=20261102-story">
+  <script type="module" src="./atlas.js?v=20261102-story"></script>
 </head>
 <body class="atlas-body">
   <a class="skip" href="#tour-title">Skip to explanation</a>
@@ -16,10 +16,10 @@
   <main id="atlas-main">
     <div class="atlas-lab walkthrough-layout" id="lab-top">
       <section class="lesson-pane" aria-label="Guided explanation">
-        <div class="method-picker"><label for="method-select" class="sr-only">Encoding method</label><select id="method-select"></select></div>
+        <div class="method-picker"><div class="path-heading"><span id="chapter-progress"></span><button id="toggle-methods" aria-expanded="false" aria-controls="method-select">Research &amp; alternatives</button></div><label for="method-select" class="sr-only">Encoding method</label><select id="method-select"></select></div>
         <div class="lesson-scroll">
-          <div class="method-heading"><h1 id="method-name">M-RoPE</h1><p id="method-summary"></p><button id="open-notes" class="text-button">Method notes &amp; sources ↗</button></div>
-          <article class="tour-lesson" aria-labelledby="tour-title"><p id="tour-focus" class="eyebrow"></p><h2 id="tour-title" tabindex="-1"></h2><p id="tour-body"></p><p id="tour-observation" class="tour-observation"></p><button id="try-experiment" class="experiment-button" hidden></button><details class="reading-help"><summary>How to read this view</summary><p id="reading-help"></p></details></article>
+          <div class="method-heading"><h1 id="method-name">Sinusoidal</h1><p id="method-summary"></p><button id="open-notes" class="text-button">Method notes &amp; sources ↗</button></div>
+          <article class="tour-lesson" aria-labelledby="tour-title"><p id="tour-focus" class="eyebrow"></p><h2 id="tour-title" tabindex="-1"></h2><p id="tour-body"></p><p id="tour-idea" class="tour-idea"></p><p id="tour-observation" class="tour-observation"></p><button id="try-experiment" class="experiment-button" hidden></button><p id="tour-tradeoff" class="tour-tradeoff" hidden></p><p id="chapter-next" class="chapter-next" hidden></p><details class="reading-help"><summary>How to read this view</summary><p id="reading-help"></p></details></article>
           <div class="lesson-tools"><button id="restart-tour">Restart</button><button id="explore-freely">Explore freely ↗</button></div>
         </div>
         <nav class="tour-navigation" aria-label="Tutorial navigation"><button id="tour-prev" class="secondary">← Previous</button><span id="tour-short-progress" aria-live="polite" aria-atomic="true"></span><button id="tour-next" class="primary">Next →</button></nav>
@@ -63,7 +63,7 @@
 
   </dialog>
   <dialog id="library-dialog" aria-labelledby="library-title"><div class="dialog-heading"><h2 id="library-title">References &amp; further reading</h2><button data-close aria-label="Close references">×</button></div>
-    <section class="atlas-reading" id="reading"><p class="eyebrow">A LIVING MAP OF THE LITERATURE</p><h2>Follow the ideas back to their sources.</h2><p>Every explorer above links to a primary paper or implementation. The configurations deliberately share a small context so you can separate changes to coordinates, frequencies, and positional biases. They are not benchmark reproductions.</p><div class="reading-index" id="reading-index"></div><details><summary>Further research · not yet implemented in this lab</summary><div id="further-reading"></div><p class="micro">These entries are a research queue, not interactive implementations. A method is added to the explorer only after its construction and a testable example are checked. This atlas does not claim to cover all published positional-encoding research.</p></details></section>
+    <section class="atlas-reading" id="reading"><p class="eyebrow">CORE IDEAS &amp; OPTIONAL BRANCHES</p><h2>Follow the ideas back to their sources.</h2><p>The nine-chapter core path is a teaching sequence, not a claim that each method replaced the last. Other approaches and research branches remain here for focused comparisons. Every explorer links to a primary paper or implementation. The configurations deliberately share a small context so you can separate changes to coordinates, frequencies, and positional biases. They are not benchmark reproductions.</p><div class="reading-index" id="reading-index"></div><details><summary>Further research · not yet implemented in this lab</summary><div id="further-reading"></div><p class="micro">These entries are a research queue, not interactive implementations. A method is added to the explorer only after its construction and a testable example are checked. This atlas does not claim to cover all published positional-encoding research.</p></details></section>
   <footer><span>Position, Explained · Rishabh Patil</span><div><a href="../">All learning &amp; research</a><a href="https://bbycroft.net/llm">Walkthrough inspiration ↗</a><a href="./">Introductory guide</a><a href="./privacy.html">Privacy</a><button id="privacy-settings">Analytics preferences</button><a href="https://github.com/RishabhPatil/learn/issues/new">Suggest a paper ↗</a></div></footer>
 
   </dialog>

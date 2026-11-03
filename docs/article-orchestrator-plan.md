@@ -10,7 +10,7 @@ The author learns and thinks visually. This collection shares that way of unders
 
 Design the visual experiment before drafting the long explanation:
 
-1. Start with one reader question or misconception and a small, inspectable example.
+1. Start with one reader question or misconception and a small, inspectable example. Explain why the method was developed: the prior approach, the concrete limitation, and the new idea. Distinguish the authors’ documented motivation from our teaching analogy; cite primary sources. Curate a core tutorial and move specialist comparisons to optional branches. Do not imply a chronological chain of replacements or label older methods unsuccessful without evidence.
 2. Name what the reader changes, what stays fixed, and the observable consequence. Make the consequence visible in the main view.
 3. Invite a prediction, then let the reader act. Show a short explanation tied to the current result; offer a reset for comparison.
 4. Use consistent colors and labels to connect the input, operation, and output. Prefer one meaningful control per guided step; disclose the rest in Explore.
@@ -71,7 +71,7 @@ For the selected topic, the orchestrator writes a brief under `docs/articles/<sl
 
 - The reader’s question, prerequisites, and one-sentence outcome.
 - Three to five initial constructions or methods, with explicit exclusions.
-- A five-step teaching sequence: input, construction, result, controlled comparison, experiment.
+- A five-step teaching sequence: motivation, representation, construction, controlled comparison, experiment and tradeoff. End by explaining the remaining limitation and the next useful question. Keep one article per run; finish and review it before starting another.
 - A table mapping each substantive claim to a primary paper section or pinned implementation, equation, test, and visible demonstration.
 - A fixed baseline and one counterfactual for every method: what changes, what stays fixed, and what the reader should notice.
 - Names, dimensions, units, conventions, and whether quantities are exact, illustrative, or measured.

@@ -8,7 +8,7 @@ export function sampleText(methodId) {
     : {prefix:'Find the red object',suffix:'Where is it now?'};
 }
 
-export const stepNames = ['Input', 'Position IDs', 'Encoding', 'Compare', 'Explore'];
+export const stepNames = ['Why this idea?', 'Position IDs', 'Encoding', 'Compare', 'Experiment & tradeoff'];
 
 // Deterministic examples make Previous, Next, and Restart reproducible.
 // The controller initializes step 5 with its focused experiment baseline.
