@@ -92,3 +92,8 @@ Motivations were reviewed against the primary sources already linked in `atlas-r
 Encoding, Compare, and Explore now show geometry above the encoding instead of replacing it. The 3D-only control remains available for focusing on coordinates. All 24 rotary pairs stay present; additive and relative methods retain their appropriate lower component plot. Token A and Token B selectors live above the scene, share its amber/blue colors, and update both views. Selecting a token enters Explore without replacing the chosen pair or resetting the camera. Canvas click/shift-click uses the same state. Excluded text tokens remain disabled for vision-only methods.
 
 Desktop keeps the combined view in the right pane. Phone layouts allow normal page scrolling so the geometry, all circles, and explanation remain accessible; Previous/Next stays fixed. Readout and circle checks cover a zero-difference same-token pair and an M-RoPE row displacement that changes exactly the height-assigned pairs.
+
+
+## Active token cells (2026-11-02)
+
+Each A/B dropdown and its heading now occupy a clickable cell. Clicking anywhere in a cell, focusing its dropdown, or activating its heading button makes it the target for the next 3D token click. B is initially active; Shift-click remains an A shortcut and activates A. Active state uses both a color-matched border and an explicit label, with pressed-state semantics on the keyboard-operable heading button. The scene hint names the current target. Direct selections reject excluded tokens, retain the other selection, enter Explore, and update geometry and phases together. Dragging remains camera rotation.

@@ -7,8 +7,8 @@
   <meta name="author" content="Rishabh Patil"><meta name="theme-color" content="#f7f6f0"><meta name="referrer" content="strict-origin-when-cross-origin">
   <link rel="canonical" href="https://rishabhpatil.github.io/learn/positional-encoding/atlas.html">
   <meta property="og:title" content="The Position Atlas"><meta property="og:description" content="Why each positional encoding exists. Follow the problems, explore the geometry, and test the tradeoffs."><meta property="og:type" content="website">
-  <link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./style.css"><link rel="stylesheet" href="./atlas.css"><link rel="stylesheet" href="./atlas-walkthrough.css?v=20261102-combined">
-  <script type="module" src="./atlas.js?v=20261102-combined"></script>
+  <link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./style.css"><link rel="stylesheet" href="./atlas.css"><link rel="stylesheet" href="./atlas-walkthrough.css?v=20261102-token-cells">
+  <script type="module" src="./atlas.js?v=20261102-token-cells"></script>
 </head>
 <body class="atlas-body">
   <a class="skip" href="#tour-title">Skip to explanation</a>
@@ -26,10 +26,13 @@
       </section>
       <section class="visual-pane" aria-label="Synchronized positional encoding visualization">
         <div class="visual-heading"><div class="visual-jumps" role="group" aria-label="Visualization panels"><button id="show-geometry" aria-controls="geometry-view" aria-pressed="true">3D only</button><button id="show-encoding" aria-controls="geometry-view encoding-view" aria-pressed="false">3D + encoding</button></div><button id="open-settings">Adjust example</button></div>
-        <div class="token-selection" role="group" aria-label="Compare two tokens"><label><span class="phase-a">Token A</span><select id="query-token" aria-label="Token A"></select></label><label><span class="phase-b">Token B</span><select id="key-token" aria-label="Token B"></select></label></div>
+        <div class="token-selection" role="group" aria-label="Compare two tokens">
+          <div class="token-cell" data-token="query"><button id="activate-query" class="token-cell-heading" type="button" aria-pressed="false" aria-controls="space" aria-label="Edit Token A in 3D"><span class="phase-a">Token A</span><span class="token-cell-state">Click to edit</span></button><select id="query-token" aria-label="Token A"></select></div>
+          <div class="token-cell" data-token="key"><button id="activate-key" class="token-cell-heading" type="button" aria-pressed="true" aria-controls="space" aria-label="Edit Token B in 3D"><span class="phase-b">Token B</span><span class="token-cell-state">Active</span></button><select id="key-token" aria-label="Token B"></select></div>
+        </div>
         <div class="visual-scroll">
           <div id="geometry-view" class="geometry-view">
-            <div class="space-stage"><div class="stage-caption"><span id="space-title"></span></div><canvas id="space" tabindex="0" aria-label="Interactive 3D position space. Drag or use arrow keys to rotate; plus and minus to zoom. Click a token to select B, shift-click for A. Choose Token A and Token B above. All coordinate data is available in Adjust example.">Use the Token A and Token B selectors above; open Adjust example for the coordinate table.</canvas><div class="scene-tools"><span id="space-hint"></span><div class="camera-actions"><button id="zoom-out" aria-label="Zoom out">−</button><button id="zoom-in" aria-label="Zoom in">+</button><button id="reset-view">Reset view</button></div></div></div>
+            <div class="space-stage"><div class="stage-caption"><span id="space-title"></span></div><canvas id="space" tabindex="0" aria-label="Interactive 3D position space. Drag or use arrow keys to rotate; plus and minus to zoom. Activate the Token A or Token B cell above, then click a token to change it. Shift-click also selects A. All coordinate data is available in Adjust example.">Use the Token A and Token B selectors above; open Adjust example for the coordinate table.</canvas><div class="scene-tools"><span id="space-hint"></span><div class="camera-actions"><button id="zoom-out" aria-label="Zoom out">−</button><button id="zoom-in" aria-label="Zoom in">+</button><button id="reset-view">Reset view</button></div></div></div>
             <p id="geometry-caption" class="geometry-caption"></p>
           </div>
           <div id="encoding-view" hidden>

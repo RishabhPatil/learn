@@ -12,7 +12,7 @@ import { createAnalytics } from '../analytics.js';
 const $=id=>document.getElementById(id);
 const analytics=createAnalytics({window,document,id:analyticsId});
 const state={step:0,method:'sinusoidal',scene:'image',grid:4,prefix:'Find the red object',suffix:'Where is it now?',query:0,key:0,pair:0,view:'encoded',color:'texture',options:{...defaults}};
-let context,positions,textures=[],statusTimer,experimentAlternate=false,experimentReady=false,showAllMethods=false;
+let context,positions,textures=[],statusTimer,experimentAlternate=false,experimentReady=false,showAllMethods=false,activeToken='key';
 const safeScene=new Set(['image','video','two-images','text']);
 function notify(message){$('status').textContent=message;clearTimeout(statusTimer);statusTimer=setTimeout(()=>$('status').textContent='',6500);}
 function element(tag,text,className){const el=document.createElement(tag);if(text!==undefined)el.textContent=text;if(className)el.className=className;return el;}
@@ -41,7 +41,28 @@ else if(!initialParams.has('step'))state.step=4;
 else state.view=state.step===0?'source':'encoded';
 if(method().family==='Vision'&&state.scene==='text')state.scene='image';
 const hasLinkedQuery=new URLSearchParams(location.hash.slice(1)).has('query');
-const scene=new PositionScene($('space'),{onSelect(id,isQuery){if(isQuery){if(positions[id].excluded){notify('Select a visual token for this vision-only method.');return;}state.query=id;}else state.key=id;customize();render();showVisualPanel('encoding-view');}});
+const scene=new PositionScene($('space'),{onSelect(id,isQuery){
+  if(positions[id].excluded){notify('Select a visual token for this vision-only method.');return;}
+  const target=isQuery?'query':activeToken;
+  activateToken(target);state[target]=id;customize();render();showVisualPanel('encoding-view');
+}});
+function activateToken(target){
+  activeToken=target;
+  for(const cell of document.querySelectorAll('.token-cell')){
+    const active=cell.dataset.token===target;
+    cell.classList.toggle('is-active',active);
+    cell.querySelector('button').setAttribute('aria-pressed',String(active));
+    cell.querySelector('.token-cell-state').textContent=active?'Active':'Click to edit';
+  }
+  const label=target==='query'?'A':'B';
+  $('space-hint').textContent=`Click a token to set ${label} · Drag to rotate`;
+  $('space').setAttribute('aria-label',`Interactive 3D position space. Click a token to set Token ${label}. Activate the other token cell above to switch. Drag or use arrow keys to rotate; plus and minus to zoom. Shift-click selects A. Exact selection is also available in the Token A and Token B dropdowns.`);
+}
+for(const cell of document.querySelectorAll('.token-cell')){
+  cell.addEventListener('click',()=>activateToken(cell.dataset.token));
+  cell.addEventListener('focusin',()=>activateToken(cell.dataset.token));
+}
+activateToken(activeToken);
 
 function sampleImage(frame,group){
   const canvas=document.createElement('canvas');canvas.width=canvas.height=48;const c=canvas.getContext('2d');
@@ -133,7 +154,7 @@ function render(){
   $('frequency-description').textContent=m.frequency;
   $('geometry-caption').textContent=state.method==='vrope'?'3D parameterization · inspect all four IDs':state.view==='source'?'Input layout · independent of the encoding':'Position IDs · not hidden embeddings';
   $('space-title').textContent=state.view==='source'?'SOURCE CONTEXT LAYOUT':state.method==='vrope'?'FOUR COORDINATES · THREE-DIMENSIONAL VIEW':'POSITION-INDEX SPACE';
-  $('space-hint').textContent='Drag to rotate · click B · shift-click A';
+  activateToken(activeToken);
   const selects=[['query-token',state.query],['key-token',state.key]];
   for(const[id,value]of selects){$(id).replaceChildren(...positions.map(p=>{const el=option(p.token.id,`${p.token.id} · ${p.token.label}`);if(p.excluded)el.disabled=true;return el;}));$(id).value=value;}
   controlsForMethod();renderScene();renderInspector();renderComponents();renderFrequency();renderTable();renderTour();
@@ -310,7 +331,7 @@ function updateReadingHelp(){
   const geometry=state.view==='source'
     ? 'Dots represent word-level teaching tokens; each tile represents one patch of 12 × 12 pixels. This is the original input layout before assigning position IDs.'
     : 'The 3D scene plots position IDs, not trained vectors. The image texture helps you follow patches when the layout changes.';
-  const controls=' Choose Token A and Token B above the scene, or click a token for B and shift-click for A. Drag to rotate.';
+  const controls=' Click the Token A or Token B cell above to activate it, then click a token in the scene to change that selection. The dropdowns also work. Drag to rotate; shift-click is a shortcut for A.';
   $('reading-help').textContent=geometry+controls+($('encoding-view').hidden?'':' Below the scene, the encoding uses those same two tokens. '+readingGuide(state.method,method().kind==='rotary'));
 }
 for(const [button,id] of [['open-notes','notes-dialog'],['open-settings','settings-dialog'],['open-library','library-dialog']]){
@@ -340,7 +361,7 @@ $('settings-dialog').addEventListener('change',event=>{if(event.target.matches('
 $('example').addEventListener('change',()=>{state.scene=$('example').value;rebuild(true);scene.reset();});
 $('timing').addEventListener('change',()=>{state.options.timing=$('timing').value;render();});
 for(const [id,key] of [['query-token','query'],['key-token','key']])$(id).addEventListener('change',()=>{
-  state[key]=Number($(id).value);customize();render();showVisualPanel('encoding-view');
+  activateToken(key);state[key]=Number($(id).value);customize();render();showVisualPanel('encoding-view');
 });
 $('frequency-base').addEventListener('change',()=>{state.options.base=Number($('frequency-base').value);render();});
 for(const name of['scale','stride','radius','angle','head','seed','slope','increment'])$(name).addEventListener('input',()=>{state.options[name]=Number($(name).value);render();});

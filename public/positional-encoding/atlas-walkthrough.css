@@ -182,3 +182,14 @@
  .combined-view .phase-pair{min-height:56px}
  .combined-view .phase-readout{font-size:10px}
 }
+
+/* A cell chooses which token a direct click in the scene will edit. */
+.token-cell{min-width:0;padding:6px 10px 9px;border:1px solid var(--line);border-radius:6px;background:#fffef9;cursor:pointer}
+.token-cell-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;border:0;padding:2px 0 6px;background:none;font:12px var(--sans,sans-serif);text-align:left;min-height:28px}
+.token-cell-state{font-size:10px;color:var(--muted);font-weight:400}
+.token-cell.is-active[data-token=query]{border-color:#98621c;box-shadow:inset 0 0 0 1px #98621c;background:#fbf4e7}
+.token-cell.is-active[data-token=key]{border-color:#356aa0;box-shadow:inset 0 0 0 1px #356aa0;background:#eef4fa}
+.token-cell.is-active .token-cell-state{color:var(--ink);font-weight:600}
+.token-cell select{display:block;background:#fffefb}
+#space{cursor:crosshair}#space:active{cursor:grabbing}
+@media(max-width:700px){.token-cell{padding:4px 7px 7px}.token-cell-heading{font-size:11px;gap:4px}.token-cell-state{font-size:9px}.token-cell select{margin-top:0}}
