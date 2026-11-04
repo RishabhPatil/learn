@@ -5,14 +5,15 @@ import { lessonPreset, stepNames, sampleText } from './atlas-walkthrough.js?v=20
 import { methods, furtherReading } from './atlas-data.js';
 import { referenceWriteups as references } from './atlas-reference.js?v=20261102-story';
 import { buildContext, coordinates, phase, pairInfo, eligibleQueries, axesFor, defaults, PAIRS, DIM, encodingComponents, relativeEncoding, relativeBucket } from './atlas-math.js';
-import { PositionScene } from './atlas-scene.js';
+import { PositionScene } from './atlas-scene.js?v=20261103-qol';
+import { neighborToken, phaseDirection } from './atlas-navigation.js';
 import { analyticsId } from '../config.js';
 import { createAnalytics } from '../analytics.js';
 
 const $=id=>document.getElementById(id);
 const analytics=createAnalytics({window,document,id:analyticsId});
 const state={step:0,method:'sinusoidal',scene:'image',grid:4,prefix:'Find the red object',suffix:'Where is it now?',query:0,key:0,pair:0,view:'encoded',color:'texture',options:{...defaults}};
-let context,positions,textures=[],statusTimer,experimentAlternate=false,experimentReady=false,showAllMethods=false,activeToken='key';
+let context,positions,textures=[],statusTimer,experimentAlternate=false,experimentReady=false,showAllMethods=false,activeToken='key',pairBaseline=null,previewPair=null;
 const safeScene=new Set(['image','video','two-images','text']);
 function notify(message){$('status').textContent=message;clearTimeout(statusTimer);statusTimer=setTimeout(()=>$('status').textContent='',6500);}
 function element(tag,text,className){const el=document.createElement(tag);if(text!==undefined)el.textContent=text;if(className)el.className=className;return el;}
@@ -41,7 +42,14 @@ else if(!initialParams.has('step'))state.step=4;
 else state.view=state.step===0?'source':'encoded';
 if(method().family==='Vision'&&state.scene==='text')state.scene='image';
 const hasLinkedQuery=new URLSearchParams(location.hash.slice(1)).has('query');
-const scene=new PositionScene($('space'),{onSelect(id,isQuery){
+const scene=new PositionScene($('space'),{onHover(record,hit){
+  const tooltip=$('token-hover');tooltip.hidden=!record;
+  if(!record)return;
+  const t=record.token;
+  tooltip.textContent=`${t.label} · IDs ${tuple(record)}${t.type==='text'?'':` · frame ${t.f}, row ${t.h}, column ${t.w}`}`;
+  tooltip.style.left=`${Math.max(8,Math.min($('space').clientWidth-248,hit.x+14))}px`;
+  tooltip.style.top=`${Math.max(30,Math.min($('space').clientHeight-56,hit.y+14))}px`;
+},onSelect(id,isQuery){
   if(positions[id].excluded){notify('Select a visual token for this vision-only method.');return;}
   const target=isQuery?'query':activeToken;
   activateToken(target);state[target]=id;customize();render();showVisualPanel('encoding-view');
@@ -56,6 +64,8 @@ function activateToken(target){
   }
   const label=target==='query'?'A':'B';
   $('space-hint').textContent=`Click a token to set ${label} · Drag to rotate`;
+  $('neighbor-title').textContent=`Move ${label}`;
+  if(positions)updatePairTools();
   $('space').setAttribute('aria-label',`Interactive 3D position space. Click a token to set Token ${label}. Activate the other token cell above to switch. Drag or use arrow keys to rotate; plus and minus to zoom. Shift-click selects A. Exact selection is also available in the Token A and Token B dropdowns.`);
 }
 for(const cell of document.querySelectorAll('.token-cell')){
@@ -63,6 +73,32 @@ for(const cell of document.querySelectorAll('.token-cell')){
   cell.addEventListener('focusin',()=>activateToken(cell.dataset.token));
 }
 activateToken(activeToken);
+
+function updatePairTools(){
+  if(!positions)return;
+  $('swap-pair').disabled=state.query===state.key;
+  $('reset-pair').disabled=!pairBaseline||(state.query===pairBaseline.query&&state.key===pairBaseline.key);
+  for(const button of document.querySelectorAll('[data-move]'))button.disabled=neighborToken(positions,state[activeToken],button.dataset.move)===null;
+}
+function changePair(){customize();render();showVisualPanel('encoding-view');}
+$('swap-pair').addEventListener('click',()=>{[state.query,state.key]=[state.key,state.query];changePair();});
+$('reset-pair').addEventListener('click',()=>{if(pairBaseline){Object.assign(state,pairBaseline);changePair();}});
+for(const button of document.querySelectorAll('[data-move]'))button.addEventListener('click',()=>{
+  const id=neighborToken(positions,state[activeToken],button.dataset.move);
+  if(id!==null){state[activeToken]=id;changePair();}
+});
+function renderAxisLink(){
+  const rotary=method().kind==='rotary'&&!$('encoding-view').hidden;
+  $('axis-link').hidden=!rotary;
+  if(!rotary){scene.highlightDirection(null);return;}
+  if(state.view==='source'){
+    scene.highlightDirection(null);$('axis-link').textContent='Source layout shown. Choose Position IDs in Adjust example to trace phase directions.';return;
+  }
+  const pair=previewPair??state.pair,direction=phaseDirection(state.method,pair,state.options);
+  scene.highlightDirection(direction);
+  $('axis-link').textContent=`Pair ${pair} → ${direction.label} · purple line through A shows the coordinate direction driving this phase${scene.fitMode==='selection'?' · focused on A/B':''}.`;
+}
+function previewFrequency(pair){previewPair=pair;renderAxisLink();}
 
 function sampleImage(frame,group){
   const canvas=document.createElement('canvas');canvas.width=canvas.height=48;const c=canvas.getContext('2d');
@@ -84,15 +120,15 @@ function rebuild(resetQuery=false){
   $('example').querySelector('option[value=text]').disabled=method().family==='Vision';
   $('example').value=state.scene;
   $('example-description').textContent=`${context.tokens.length} illustrative tokens${state.scene==='text'?'':' · 4 × 4 patches per frame'} · fixed sample, no model tokenization`;
-  render();
+  render();pairBaseline={query:state.query,key:state.key};updatePairTools();
 }
 function selectMethod(id){
-  state.method=id;state.step=0;
+  state.method=id;state.step=0;previewPair=null;
   if(!guidedPath.includes(id))showAllMethods=true;
   populateMethods();goToStep(0);analytics.track('method_select',id);
 }
 function goToStep(index,focus=true){
-  experimentAlternate=false;
+  experimentAlternate=false;previewPair=null;
   const next=Math.max(0,Math.min(4,index));
   if(next<4)Object.assign(state,lessonPreset(state.method,next));
   else{Object.assign(state,experimentPreset(state.method,false));experimentReady=true;}
@@ -157,7 +193,7 @@ function render(){
   activateToken(activeToken);
   const selects=[['query-token',state.query],['key-token',state.key]];
   for(const[id,value]of selects){$(id).replaceChildren(...positions.map(p=>{const el=option(p.token.id,`${p.token.id} · ${p.token.label}`);if(p.excluded)el.disabled=true;return el;}));$(id).value=value;}
-  controlsForMethod();renderScene();renderInspector();renderComponents();renderFrequency();renderTable();renderTour();
+  controlsForMethod();renderScene();renderInspector();renderComponents();renderFrequency();renderTable();renderTour();updatePairTools();renderAxisLink();
   $('view-encoded').setAttribute('aria-pressed',String(state.view==='encoded'));$('view-source').setAttribute('aria-pressed',String(state.view==='source'));
 }
 function renderScene(){
@@ -254,7 +290,11 @@ function renderFrequency(){
   if(!$('phase-grid').children.length)for(let j=0;j<PAIRS;j++){
     const button=element('button',undefined,'phase-pair');button.type='button';
     button.append(make('svg',{viewBox:'0 0 100 88','aria-hidden':'true'}),element('span'));
-    button.addEventListener('click',()=>{state.pair=j;renderFrequency();renderTour();});
+    button.addEventListener('pointerenter',()=>previewFrequency(j));
+    button.addEventListener('pointerleave',()=>previewFrequency(null));
+    button.addEventListener('focus',()=>previewFrequency(j));
+    button.addEventListener('blur',()=>previewFrequency(null));
+    button.addEventListener('click',()=>{state.pair=j;previewPair=null;renderFrequency();renderTour();renderAxisLink();});
     $('phase-grid').append(button);
   }
   $('frequency-strip').replaceChildren();
@@ -274,7 +314,7 @@ function renderFrequency(){
     }
     const allocation=element('button',info.name,'frequency-pair');allocation.dataset.axis=info.name;
     allocation.append(element('small',String(j)));allocation.title=button.title;allocation.setAttribute('aria-label',button.title);allocation.setAttribute('aria-pressed',String(j===state.pair));
-    allocation.addEventListener('click',()=>{state.pair=j;renderFrequency();renderTour();});$('frequency-strip').append(allocation);
+    allocation.addEventListener('click',()=>{state.pair=j;previewPair=null;renderFrequency();renderTour();renderAxisLink();});$('frequency-strip').append(allocation);
   }
   const q=phase(positions[state.query],state.method,state.pair,state.options),k=phase(positions[state.key],state.method,state.pair,state.options),info=pairInfo(state.method,state.pair,state.options);
   let rule=`Δφ = ΔID[${info.name}] × θ = ${number(positions[state.key].ids[info.axis]-positions[state.query].ids[info.axis])} × ${number(info.frequency)}`;
@@ -325,14 +365,14 @@ function showVisualPanel(id){
   $('show-geometry').setAttribute('aria-pressed',String(!combined));
   $('show-encoding').setAttribute('aria-pressed',String(combined));
   document.querySelector('.visual-scroll').scrollTop=0;
-  scene.requestDraw();updateReadingHelp();
+  scene.requestDraw();updateReadingHelp();renderAxisLink();
 }
 function updateReadingHelp(){
   const geometry=state.view==='source'
     ? 'Dots represent word-level teaching tokens; each tile represents one patch of 12 × 12 pixels. This is the original input layout before assigning position IDs.'
     : 'The 3D scene plots position IDs, not trained vectors. The image texture helps you follow patches when the layout changes.';
   const controls=' Click the Token A or Token B cell above to activate it, then click a token in the scene to change that selection. The dropdowns also work. Drag to rotate; shift-click is a shortcut for A.';
-  $('reading-help').textContent=geometry+controls+($('encoding-view').hidden?'':' Below the scene, the encoding uses those same two tokens. '+readingGuide(state.method,method().kind==='rotary'));
+  $('reading-help').textContent=geometry+controls+' Fit all restores the full context; Focus A/B frames the selected pair. Move offers neighbors within the source grid. Hover a circle, or focus it with the keyboard, to preview its phase direction in purple.'+($('encoding-view').hidden?'':' Below the scene, the encoding uses those same two tokens. '+readingGuide(state.method,method().kind==='rotary'));
 }
 for(const [button,id] of [['open-notes','notes-dialog'],['open-settings','settings-dialog'],['open-library','library-dialog']]){
   $(button).addEventListener('click',()=>$(id).showModal());
@@ -367,8 +407,10 @@ $('frequency-base').addEventListener('change',()=>{state.options.base=Number($('
 for(const name of['scale','stride','radius','angle','head','seed','slope','increment'])$(name).addEventListener('input',()=>{state.options[name]=Number($(name).value);render();});
 for(const [id,value]of[['view-source','source'],['view-encoded','encoded']])$(id).addEventListener('click',()=>{customize();state.view=value;scene.reset();render();});
 $('color-mode').addEventListener('change',()=>{state.color=$('color-mode').value;renderScene();});
-$('pair-select').append(...Array.from({length:PAIRS},(_,j)=>option(j,`Pair ${j}`)));$('pair-select').addEventListener('change',()=>{state.pair=Number($('pair-select').value);renderFrequency();renderTour();});
-$('zoom-in').addEventListener('click',()=>scene.zoomBy(1.2));$('zoom-out').addEventListener('click',()=>scene.zoomBy(1/1.2));$('reset-view').addEventListener('click',()=>scene.reset());
+$('pair-select').append(...Array.from({length:PAIRS},(_,j)=>option(j,`Pair ${j}`)));$('pair-select').addEventListener('change',()=>{state.pair=Number($('pair-select').value);previewPair=null;renderFrequency();renderTour();renderAxisLink();});
+$('zoom-in').addEventListener('click',()=>scene.zoomBy(1.2));$('zoom-out').addEventListener('click',()=>scene.zoomBy(1/1.2));$('reset-view').addEventListener('click',()=>{scene.reset();renderAxisLink();});
+$('fit-all').addEventListener('click',()=>{scene.fit('all');renderAxisLink();});
+$('focus-pair').addEventListener('click',()=>{scene.fit('selection');renderAxisLink();});
 $('copy-link').addEventListener('click',async()=>{
   const params=new URLSearchParams({method:state.method,step:String(state.step),scene:state.scene,query:String(state.query),key:String(state.key),pair:String(state.pair),color:state.color});
   for(const key of['base','scale','stride','radius','angle','head','seed','slope','increment','timing'])params.set(key,String(state.options[key]));

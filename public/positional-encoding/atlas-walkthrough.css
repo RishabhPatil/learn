@@ -193,3 +193,27 @@
 .token-cell select{display:block;background:#fffefb}
 #space{cursor:crosshair}#space:active{cursor:grabbing}
 @media(max-width:700px){.token-cell{padding:4px 7px 7px}.token-cell-heading{font-size:11px;gap:4px}.token-cell-state{font-size:9px}.token-cell select{margin-top:0}}
+
+/* Small exploration helpers, with secondary movement controls disclosed. */
+.pair-tools{display:flex;align-items:flex-start;gap:14px;padding:0 24px 8px;flex-shrink:0;position:relative;z-index:2}
+.pair-tools>button,.pair-tools summary{border:0;background:none;color:var(--green);font:11px var(--sans,sans-serif);min-height:30px;padding:4px 0;cursor:pointer}
+.pair-tools button:disabled{opacity:.4;cursor:default}
+#neighbor-tools{margin-left:auto;font-size:11px}
+#neighbor-tools[open]{position:relative;max-width:340px}
+.neighbor-buttons{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+.neighbor-buttons button{font:10px var(--sans,sans-serif);padding:6px 4px;border:1px solid var(--line);border-radius:4px;background:#fffef9;min-height:34px;color:var(--green)}
+#neighbor-tools p{font-size:10px;line-height:1.6;margin:6px 0 0;color:var(--muted)}
+.token-hover{position:absolute;z-index:3;max-width:240px;padding:7px 10px;background:#fffef5f5;border:1px solid #7e9a87;border-radius:5px;color:var(--ink);font:11px/1.5 var(--mono);pointer-events:none;box-shadow:0 2px 9px #173d2520}
+.axis-link{font:10px/1.5 var(--sans,sans-serif);color:#74428b;margin:0;padding:0 24px 7px}
+.combined-view .geometry-view{height:clamp(270px,37dvh,350px);min-height:270px}
+.camera-actions{flex-wrap:wrap;justify-content:flex-end}.camera-actions button{font-size:11px}
+.scene-tools{flex-wrap:wrap}#space-hint{flex:1;min-width:160px}
+@media(max-width:700px){
+ .pair-tools{padding:0 12px 6px;gap:12px;flex-wrap:wrap}
+ #neighbor-tools[open]{flex-basis:100%;max-width:none;margin:0}
+ .neighbor-buttons button{min-height:38px}
+ .combined-view .geometry-view{height:320px;min-height:320px}
+ .axis-link{padding:0 12px 7px;font-size:10px}
+ .camera-actions{gap:3px}.camera-actions button{font-size:10px}
+ #space-hint{max-width:none;font-size:9px;flex-basis:100%}
+}

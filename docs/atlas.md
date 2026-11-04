@@ -97,3 +97,11 @@ Desktop keeps the combined view in the right pane. Phone layouts allow normal pa
 ## Active token cells (2026-11-02)
 
 Each A/B dropdown and its heading now occupy a clickable cell. Clicking anywhere in a cell, focusing its dropdown, or activating its heading button makes it the target for the next 3D token click. B is initially active; Shift-click remains an A shortcut and activates A. Active state uses both a color-matched border and an explicit label, with pressed-state semantics on the keyboard-operable heading button. The scene hint names the current target. Direct selections reject excluded tokens, retain the other selection, enter Explore, and update geometry and phases together. Dragging remains camera rotation.
+
+## Exploration controls (2026-11-03)
+
+Camera fitting uses projected bounds, including patch corners, so line and plane examples fill the available view. Fit all includes the eligible context; Focus A/B frames the selected pair. Both retain orientation, while Reset view restores the default orientation. Orbit retains its scale until a new fit, selection, geometry, or viewport requires recalculation.
+
+Hovering a token previews its IDs and source grid coordinates without selecting it. Swap A/B reverses the comparison; Reset pair restores the pair established by the current lesson or example. The Move A/B disclosure operates on the active cell. Sequence moves skip excluded tokens; row, column, and frame moves preserve the other source coordinates and stop at the visual group's boundaries.
+
+Hovering or keyboard-focusing a rotary circle previews its phase direction in purple through A; clicking commits the frequency pair. The line is the gradient of the phase argument in displayed position coordinates, not a learned vector, an attention strength, or the rotary channel plane. Mixed RoPE uses its oblique direction and VRoPE uses the corresponding signed four-stream direction. Source layout and nonrotary methods do not display this line. Tests verify the direction against phase differences for every rotary method and all 24 pairs, along with neighbor boundaries and camera fitting.
